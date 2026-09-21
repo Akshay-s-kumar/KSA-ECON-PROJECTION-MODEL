@@ -1,0 +1,6 @@
+duckdb
+fastapi
+geopandas
+openpyxl
+pandas
+uvicorn[standard]

@@ -1,0 +1,161 @@
+Region,Year,NACE_Code,Sector_Name,GVA_Value
+Riyadh,2020,A,Agriculture,16777.66
+Riyadh,2021,A,Agriculture,17843.89
+Riyadh,2022,A,Agriculture,16823.24
+Riyadh,2023,A,Agriculture,20750.1
+Riyadh,2024,A,Agriculture,27711.58
+Riyadh,2025,A,Agriculture,28713.38
+Riyadh,2026,A,Agriculture,28908.18
+Riyadh,2027,A,Agriculture,29409.36
+Riyadh,2028,A,Agriculture,30024.58
+Riyadh,2029,A,Agriculture,30643.63
+Riyadh,2030,A,Agriculture,31277.88
+Riyadh,2031,A,Agriculture,31879.89
+Riyadh,2032,A,Agriculture,32463.76
+Riyadh,2033,A,Agriculture,33030.15
+Riyadh,2034,A,Agriculture,33585.63
+Riyadh,2035,A,Agriculture,34076.71
+Riyadh,2020,B-E,Industry,95913.8
+Riyadh,2021,B-E,Industry,109747.2
+Riyadh,2022,B-E,Industry,145866.2
+Riyadh,2023,B-E,Industry,165038.25
+Riyadh,2024,B-E,Industry,191502.75
+Riyadh,2025,B-E,Industry,202334.15
+Riyadh,2026,B-E,Industry,215221.65
+Riyadh,2027,B-E,Industry,228616.3
+Riyadh,2028,B-E,Industry,242358.2
+Riyadh,2029,B-E,Industry,255760.7
+Riyadh,2030,B-E,Industry,269385.45
+Riyadh,2031,B-E,Industry,282494.8
+Riyadh,2032,B-E,Industry,294854.15
+Riyadh,2033,B-E,Industry,306306.6
+Riyadh,2034,B-E,Industry,316694.9
+Riyadh,2035,B-E,Industry,326406.35
+Riyadh,2020,F,Industry,95913.8
+Riyadh,2021,F,Industry,109747.2
+Riyadh,2022,F,Industry,145866.2
+Riyadh,2023,F,Industry,165038.25
+Riyadh,2024,F,Industry,191502.75
+Riyadh,2025,F,Industry,202334.15
+Riyadh,2026,F,Industry,215221.65
+Riyadh,2027,F,Industry,228616.3
+Riyadh,2028,F,Industry,242358.2
+Riyadh,2029,F,Industry,255760.7
+Riyadh,2030,F,Industry,269385.45
+Riyadh,2031,F,Industry,282494.8
+Riyadh,2032,F,Industry,294854.15
+Riyadh,2033,F,Industry,306306.6
+Riyadh,2034,F,Industry,316694.9
+Riyadh,2035,F,Industry,326406.35
+Riyadh,2020,G-I,Consumer services,108082.04000000001
+Riyadh,2021,G-I,Consumer services,123238.70000000001
+Riyadh,2022,G-I,Consumer services,138837.9
+Riyadh,2023,G-I,Consumer services,153632.6
+Riyadh,2024,G-I,Consumer services,165366.95
+Riyadh,2025,G-I,Consumer services,175828.65
+Riyadh,2026,G-I,Consumer services,182065.2
+Riyadh,2027,G-I,Consumer services,192055.09999999998
+Riyadh,2028,G-I,Consumer services,203314.05
+Riyadh,2029,G-I,Consumer services,213177.7
+Riyadh,2030,G-I,Consumer services,221633.5
+Riyadh,2031,G-I,Consumer services,229430.15
+Riyadh,2032,G-I,Consumer services,236488.05
+Riyadh,2033,G-I,Consumer services,243100.9
+Riyadh,2034,G-I,Consumer services,249369.19999999998
+Riyadh,2035,G-I,Consumer services,254873.90000000002
+Riyadh,2020,J,"Transport, storage, information & communication services",46815.44
+Riyadh,2021,J,"Transport, storage, information & communication services",51578.15
+Riyadh,2022,J,"Transport, storage, information & communication services",58501.5
+Riyadh,2023,J,"Transport, storage, information & communication services",63379.75
+Riyadh,2024,J,"Transport, storage, information & communication services",67143.15
+Riyadh,2025,J,"Transport, storage, information & communication services",71313.0
+Riyadh,2026,J,"Transport, storage, information & communication services",74964.0
+Riyadh,2027,J,"Transport, storage, information & communication services",79989.45
+Riyadh,2028,J,"Transport, storage, information & communication services",85911.6
+Riyadh,2029,J,"Transport, storage, information & communication services",90853.7
+Riyadh,2030,J,"Transport, storage, information & communication services",94835.5
+Riyadh,2031,J,"Transport, storage, information & communication services",98498.75
+Riyadh,2032,J,"Transport, storage, information & communication services",101657.2
+Riyadh,2033,J,"Transport, storage, information & communication services",104620.6
+Riyadh,2034,J,"Transport, storage, information & communication services",107436.65
+Riyadh,2035,J,"Transport, storage, information & communication services",109964.2
+Riyadh,2020,K,Financial & business services,50576.86666666667
+Riyadh,2021,K,Financial & business services,54834.166666666664
+Riyadh,2022,K,Financial & business services,60000.43333333333
+Riyadh,2023,K,Financial & business services,67947.66666666667
+Riyadh,2024,K,Financial & business services,73243.03333333334
+Riyadh,2025,K,Financial & business services,77386.96666666666
+Riyadh,2026,K,Financial & business services,80842.5
+Riyadh,2027,K,Financial & business services,85191.83333333333
+Riyadh,2028,K,Financial & business services,89777.56666666667
+Riyadh,2029,K,Financial & business services,93865.53333333333
+Riyadh,2030,K,Financial & business services,97677.86666666665
+Riyadh,2031,K,Financial & business services,101314.76666666666
+Riyadh,2032,K,Financial & business services,104642.93333333333
+Riyadh,2033,K,Financial & business services,107972.46666666667
+Riyadh,2034,K,Financial & business services,111212.46666666667
+Riyadh,2035,K,Financial & business services,114312.59999999999
+Riyadh,2020,L,Financial & business services,50576.86666666667
+Riyadh,2021,L,Financial & business services,54834.166666666664
+Riyadh,2022,L,Financial & business services,60000.43333333333
+Riyadh,2023,L,Financial & business services,67947.66666666667
+Riyadh,2024,L,Financial & business services,73243.03333333334
+Riyadh,2025,L,Financial & business services,77386.96666666666
+Riyadh,2026,L,Financial & business services,80842.5
+Riyadh,2027,L,Financial & business services,85191.83333333333
+Riyadh,2028,L,Financial & business services,89777.56666666667
+Riyadh,2029,L,Financial & business services,93865.53333333333
+Riyadh,2030,L,Financial & business services,97677.86666666665
+Riyadh,2031,L,Financial & business services,101314.76666666666
+Riyadh,2032,L,Financial & business services,104642.93333333333
+Riyadh,2033,L,Financial & business services,107972.46666666667
+Riyadh,2034,L,Financial & business services,111212.46666666667
+Riyadh,2035,L,Financial & business services,114312.59999999999
+Riyadh,2020,M_N,Financial & business services,50576.86666666667
+Riyadh,2021,M_N,Financial & business services,54834.166666666664
+Riyadh,2022,M_N,Financial & business services,60000.43333333333
+Riyadh,2023,M_N,Financial & business services,67947.66666666667
+Riyadh,2024,M_N,Financial & business services,73243.03333333334
+Riyadh,2025,M_N,Financial & business services,77386.96666666666
+Riyadh,2026,M_N,Financial & business services,80842.5
+Riyadh,2027,M_N,Financial & business services,85191.83333333333
+Riyadh,2028,M_N,Financial & business services,89777.56666666667
+Riyadh,2029,M_N,Financial & business services,93865.53333333333
+Riyadh,2030,M_N,Financial & business services,97677.86666666665
+Riyadh,2031,M_N,Financial & business services,101314.76666666666
+Riyadh,2032,M_N,Financial & business services,104642.93333333333
+Riyadh,2033,M_N,Financial & business services,107972.46666666667
+Riyadh,2034,M_N,Financial & business services,111212.46666666667
+Riyadh,2035,M_N,Financial & business services,114312.59999999999
+Riyadh,2020,O-Q,Public services,173693.3
+Riyadh,2021,O-Q,Public services,175359.3
+Riyadh,2022,O-Q,Public services,194818.7
+Riyadh,2023,O-Q,Public services,207212.8
+Riyadh,2024,O-Q,Public services,213054.5
+Riyadh,2025,O-Q,Public services,218488.8
+Riyadh,2026,O-Q,Public services,221311.2
+Riyadh,2027,O-Q,Public services,225475.5
+Riyadh,2028,O-Q,Public services,231503.9
+Riyadh,2029,O-Q,Public services,237265.6
+Riyadh,2030,O-Q,Public services,242818.3
+Riyadh,2031,O-Q,Public services,247886.4
+Riyadh,2032,O-Q,Public services,252686.6
+Riyadh,2033,O-Q,Public services,257443.0
+Riyadh,2034,O-Q,Public services,262133.6
+Riyadh,2035,O-Q,Public services,266350.7
+Riyadh,2020,R-U,Consumer services,61266.6
+Riyadh,2021,R-U,Consumer services,71660.55
+Riyadh,2022,R-U,Consumer services,80336.4
+Riyadh,2023,R-U,Consumer services,90252.85
+Riyadh,2024,R-U,Consumer services,98223.8
+Riyadh,2025,R-U,Consumer services,104515.65
+Riyadh,2026,R-U,Consumer services,107101.2
+Riyadh,2027,R-U,Consumer services,112065.65
+Riyadh,2028,R-U,Consumer services,117402.45
+Riyadh,2029,R-U,Consumer services,122324.0
+Riyadh,2030,R-U,Consumer services,126798.0
+Riyadh,2031,R-U,Consumer services,130931.4
+Riyadh,2032,R-U,Consumer services,134830.85
+Riyadh,2033,R-U,Consumer services,138480.3
+Riyadh,2034,R-U,Consumer services,141932.55
+Riyadh,2035,R-U,Consumer services,144909.7

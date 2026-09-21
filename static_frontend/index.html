@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="KSA Economic Projection Model for interactive Riyadh economic analysis."
+    >
+
+    <title>KSA Economic Projection Model</title>
+
+    <!-- Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- MapLibre CSS -->
+    <link
+        href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+        rel="stylesheet"
+    >
+
+    <!-- Local application stylesheet -->
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+<body>
+
+    <!-- =====================================================
+         FIXED ABSTRACT BACKGROUND
+         ===================================================== -->
+
+    <div
+        class="application-background"
+        aria-hidden="true"
+    >
+        <div class="background-glow background-glow-top-left"></div>
+        <div class="background-glow background-glow-bottom-left"></div>
+        <div class="background-glow background-glow-top-right"></div>
+        <div class="background-glow background-glow-bottom-right"></div>
+    </div>
+
+
+    <!-- =====================================================
+         APPLICATION
+         ===================================================== -->
+
+    <main
+        id="application"
+        class="application-shell"
+    >
+
+        <!-- =================================================
+             LEFT PARAMETER PANEL
+             ================================================= -->
+
+        <aside
+            id="parameter-panel"
+            class="parameter-panel glass-panel"
+            aria-label="Parameter Selection"
+        >
+
+            <header class="panel-header">
+                <h2>Parameter Selection</h2>
+            </header>
+
+
+            <!-- Region -->
+
+            <div class="control-group">
+
+                <label for="region-select">
+                    Region
+                </label>
+
+                <div class="select-wrapper">
+
+                    <span
+                        class="control-leading-icon"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                        >
+                            <path
+                                d="M12 21C12 21 19 14.75 19 9C19 5.13 15.87 2 12 2C8.13 2 5 5.13 5 9C5 14.75 12 21 12 21Z"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            />
+                            <circle
+                                cx="12"
+                                cy="9"
+                                r="2.5"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            />
+                        </svg>
+                    </span>
+
+                    <select
+                        id="region-select"
+                        name="region"
+                    >
+                        <option value="">
+                            Select Region
+                        </option>
+
+                        <option value="Riyadh">
+                            Riyadh Region
+                        </option>
+                    </select>
+
+                    <span
+                        class="select-arrow"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            viewBox="0 0 20 20"
+                            fill="none"
+                        >
+                            <path
+                                d="M5 7.5L10 12.5L15 7.5"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Sector -->
+
+            <div class="control-group">
+
+                <label for="sector-select">
+                    Sector
+                </label>
+
+                <div class="select-wrapper">
+
+                    <span
+                        class="control-leading-icon sector-icon"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                        >
+                            <path
+                                d="M20 4C13.5 4.2 8.4 6.5 6.1 10.4C4.3 13.5 5.4 16.7 7.2 18.2C9.1 19.8 12.7 19.5 15.2 16.5C18 13.2 19.1 8.1 20 4Z"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linejoin="round"
+                            />
+                            <path
+                                d="M4 20C7.8 15.4 11.3 12.4 16.4 8.9"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                            />
+                        </svg>
+                    </span>
+
+                    <select
+                        id="sector-select"
+                        name="sector"
+                    >
+                        <option value="A">
+                            Agriculture
+                        </option>
+
+                        <option value="B-E">
+                            Industry
+                        </option>
+
+                        <option value="F">
+                            Construction
+                        </option>
+
+                        <option value="G-I">
+                            Consumer Services
+                        </option>
+
+                        <option value="J">
+                            Transport and ICT
+                        </option>
+
+                        <option value="K">
+                            Financial Services
+                        </option>
+
+                        <option value="L">
+                            Real Estate
+                        </option>
+
+                        <option value="M_N">
+                            Professional and Business Services
+                        </option>
+
+                        <option value="O-Q">
+                            Public Services
+                        </option>
+
+                        <option value="R-U">
+                            Other Services
+                        </option>
+                    </select>
+
+                    <span
+                        class="select-arrow"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            viewBox="0 0 20 20"
+                            fill="none"
+                        >
+                            <path
+                                d="M5 7.5L10 12.5L15 7.5"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Metric -->
+
+            <div class="control-group">
+
+                <label for="metric-select">
+                    Metric
+                </label>
+
+                <div class="select-wrapper">
+
+                    <select
+                        id="metric-select"
+                        name="metric"
+                    >
+                        <option value="gva">
+                            GVA
+                        </option>
+                    </select>
+
+                    <span
+                        class="select-arrow"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            viewBox="0 0 20 20"
+                            fill="none"
+                        >
+                            <path
+                                d="M5 7.5L10 12.5L15 7.5"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Year -->
+
+            <div class="control-group year-control">
+
+                <div class="control-heading-row">
+                    <label for="year-range">
+                        Year
+                    </label>
+
+                    <output
+                        id="selected-year"
+                        for="year-range"
+                    >
+                        2030
+                    </output>
+                </div>
+
+                <input
+                    id="year-range"
+                    class="year-range"
+                    type="range"
+                    name="year"
+                    min="2020"
+                    max="2035"
+                    value="2030"
+                    step="1"
+                    aria-label="Select projection year"
+                >
+
+                <div
+                    class="range-labels"
+                    aria-hidden="true"
+                >
+                    <span>2020</span>
+                    <span>2030</span>
+                    <span>2035</span>
+                </div>
+
+            </div>
+
+
+            <!-- Run Analysis -->
+
+            <button
+                id="run-analysis-button"
+                class="run-analysis-button"
+                type="button"
+            >
+                <span>Run Analysis</span>
+
+                <span
+                    class="button-arrow"
+                    aria-hidden="true"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
+                        <path
+                            d="M5 12H19"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M14 7L19 12L14 17"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </span>
+            </button>
+
+
+            <!-- Time Period -->
+
+            <div class="control-group time-period-control">
+
+                <label for="time-period-range">
+                    Time Period
+                </label>
+
+                <input
+                    id="time-period-range"
+                    class="time-period-range"
+                    type="range"
+                    min="0"
+                    max="2"
+                    value="1"
+                    step="1"
+                    aria-label="Select time period"
+                >
+
+                <div
+                    class="range-labels"
+                    aria-hidden="true"
+                >
+                    <span>Low</span>
+                    <span>Medium</span>
+                    <span>High</span>
+                </div>
+
+            </div>
+
+
+            <!-- Comparison Region -->
+
+            <div class="comparison-row">
+
+                <label for="comparison-toggle">
+                    Comparison Region
+                </label>
+
+                <label class="toggle-switch">
+
+                    <input
+                        id="comparison-toggle"
+                        type="checkbox"
+                        disabled
+                    >
+
+                    <span class="toggle-slider"></span>
+
+                </label>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =================================================
+             MAP WORKSPACE
+             ================================================= -->
+
+        <section
+            id="map-workspace"
+            class="map-workspace"
+            aria-label="Saudi Arabia Economic Map"
+        >
+
+            <header class="application-title">
+
+                <h1>
+                    KSA Economic Projection Model
+                </h1>
+
+            </header>
+
+
+            <!-- Live Map -->
+
+            <div
+                id="map"
+                class="map-container"
+                role="application"
+                aria-label="Interactive satellite map of Saudi Arabia"
+            ></div>
+
+
+            <!-- Initial Map Status -->
+
+            <div
+                id="map-status"
+                class="map-status"
+                aria-live="polite"
+            >
+                <span class="status-indicator"></span>
+
+                <span>
+                    Select Riyadh Region and run the analysis
+                </span>
+            </div>
+
+
+            <!-- Selected Geography Heading -->
+
+            <div
+                id="selected-geography-heading"
+                class="selected-geography-heading is-hidden"
+            >
+
+                <span
+                    class="geography-icon"
+                    aria-hidden="true"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
+                        <path
+                            d="M12 21C12 21 19 14.75 19 9C19 5.13 15.87 2 12 2C8.13 2 5 5.13 5 9C5 14.75 12 21 12 21Z"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                        />
+                        <circle
+                            cx="12"
+                            cy="9"
+                            r="2.5"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                        />
+                    </svg>
+                </span>
+
+                <div>
+                    <strong>Riyadh Region</strong>
+
+                    <span>Saudi Arabia / Riyadh Region</span>
+                </div>
+
+            </div>
+
+
+            <!-- Map Loading Overlay -->
+
+            <div
+                id="map-loading-overlay"
+                class="map-loading-overlay is-hidden"
+                aria-live="polite"
+            >
+                <div class="loading-spinner"></div>
+
+                <p>Running economic analysis...</p>
+            </div>
+
+
+            <!-- Map Error -->
+
+            <div
+                id="map-error-message"
+                class="map-error-message is-hidden"
+                role="alert"
+            ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             RESULTS PANEL
+             Hidden in the initial state.
+             Slides in after Run Analysis.
+             ================================================= -->
+
+        <aside
+            id="results-panel"
+            class="results-panel glass-panel"
+            aria-label="Analysis Results"
+            aria-hidden="true"
+        >
+
+            <header class="results-panel-header">
+
+                <div class="results-heading">
+
+                    <span
+                        class="results-heading-icon"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                        >
+                            <rect
+                                x="3"
+                                y="12"
+                                width="3"
+                                height="8"
+                                rx="1"
+                                fill="currentColor"
+                            />
+                            <rect
+                                x="9"
+                                y="7"
+                                width="3"
+                                height="13"
+                                rx="1"
+                                fill="currentColor"
+                            />
+                            <rect
+                                x="15"
+                                y="3"
+                                width="3"
+                                height="17"
+                                rx="1"
+                                fill="currentColor"
+                            />
+                        </svg>
+                    </span>
+
+                    <div>
+                        <h2>Analysis Results</h2>
+
+                        <p id="results-selection-summary">
+                            Riyadh Region / Agriculture / GVA / 2030
+                        </p>
+                    </div>
+
+                </div>
+
+                <button
+                    id="close-results-button"
+                    class="close-results-button"
+                    type="button"
+                    aria-label="Close analysis results"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
+                        <path
+                            d="M6 6L18 18"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M18 6L6 18"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+                </button>
+
+            </header>
+
+
+            <div class="results-content">
+
+                <!-- KPI Grid -->
+
+                <section
+                    class="results-section"
+                    aria-labelledby="key-indicators-title"
+                >
+
+                    <h3 id="key-indicators-title">
+                        Key Indicators
+                    </h3>
+
+                    <div class="kpi-grid">
+
+                        <article class="kpi-card kpi-card-green">
+
+                            <span class="kpi-label">
+                                GVA
+                            </span>
+
+                            <strong
+                                id="kpi-gva"
+                                class="kpi-value"
+                            >
+                                -
+                            </strong>
+
+                            <span class="kpi-unit">
+                                SAR Million
+                            </span>
+
+                        </article>
+
+
+                        <article class="kpi-card kpi-card-green">
+
+                            <span class="kpi-label">
+                                Base-Year GVA
+                            </span>
+
+                            <strong
+                                id="kpi-base-gva"
+                                class="kpi-value"
+                            >
+                                -
+                            </strong>
+
+                            <span
+                                id="kpi-base-gva-year"
+                                class="kpi-unit"
+                            >
+                                SAR Million
+                            </span>
+
+                        </article>
+
+
+                        <article class="kpi-card kpi-card-blue">
+
+                            <span class="kpi-label">
+                                Sector
+                            </span>
+
+                            <strong
+                                id="kpi-sector"
+                                class="kpi-value kpi-text-value"
+                            >
+                                -
+                            </strong>
+
+                            <span class="kpi-unit">
+                                Selected economic sector
+                            </span>
+
+                        </article>
+
+
+                        <article class="kpi-card kpi-card-purple">
+
+                            <span class="kpi-label">
+                                Share of Total GVA
+                            </span>
+
+                            <strong
+                                id="kpi-share"
+                                class="kpi-value"
+                            >
+                                -
+                            </strong>
+
+                            <span class="kpi-unit">
+                                Of Riyadh GVA
+                            </span>
+
+                        </article>
+
+
+                        <article class="kpi-card kpi-card-green">
+
+                            <span class="kpi-label">
+                                GVA Growth from Base Year
+                            </span>
+
+                            <strong
+                                id="kpi-growth"
+                                class="kpi-value"
+                            >
+                                -
+                            </strong>
+
+                            <span class="kpi-unit">
+                                Percentage increase
+                            </span>
+
+                        </article>
+
+
+                        <article class="kpi-card kpi-card-orange">
+
+                            <span class="kpi-label">
+                                Forecast Year
+                            </span>
+
+                            <strong
+                                id="kpi-year"
+                                class="kpi-value"
+                            >
+                                2030
+                            </strong>
+
+                            <span class="kpi-unit">
+                                Projection year
+                            </span>
+
+                        </article>
+
+                    </div>
+
+                </section>
+
+
+                <!-- GVA Trend -->
+
+                <section
+                    class="results-section chart-section"
+                    aria-labelledby="trend-chart-title"
+                >
+
+                    <div class="section-heading-row">
+
+                        <div>
+                            <h3 id="trend-chart-title">
+                                GVA Trend
+                            </h3>
+
+                            <span>SAR Million</span>
+                        </div>
+
+                        <strong id="trend-highlight-value">
+                            -
+                        </strong>
+
+                    </div>
+
+                    <div
+                        id="gva-trend-chart"
+                        class="chart-container trend-chart"
+                        role="img"
+                        aria-label="Gross Value Added trend chart"
+                    ></div>
+
+                </section>
+
+
+                <!-- Sector Distribution -->
+
+                <section
+                    class="results-section chart-section"
+                    aria-labelledby="sector-chart-title"
+                >
+
+                    <div class="section-heading-row">
+
+                        <div>
+                            <h3 id="sector-chart-title">
+                                Sector Distribution by GVA
+                            </h3>
+
+                            <span id="sector-distribution-subtitle">
+                                SAR Million
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="sector-distribution-layout">
+
+                        <div
+                            id="sector-radar-chart"
+                            class="chart-container radar-chart"
+                            role="img"
+                            aria-label="Riyadh sector distribution radar chart"
+                        ></div>
+
+                        <div class="sector-results-table-wrapper">
+
+                            <table
+                                class="sector-results-table"
+                                aria-label="Sector distribution results"
+                            >
+                                <thead>
+                                    <tr>
+                                        <th>Sector</th>
+                                        <th>GVA</th>
+                                        <th>Share</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="sector-results-table-body">
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Source Note -->
+
+                <footer class="results-source-note">
+
+                    <span>
+                        Values are shown in SAR million unless otherwise specified.
+                    </span>
+
+                    <span>
+                        Source: Riyadh Projection Model
+                    </span>
+
+                </footer>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT LIBRARIES
+         ===================================================== -->
+
+    <!-- MapLibre GL -->
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+
+    <!-- Apache ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+
+    <!-- Local application logic -->
+    <script
+        src="app.js"
+        defer
+    ></script>
+
+</body>
+</html>
