@@ -21,7 +21,16 @@ PROCESSED_DIR = PROJECT_DIR / "data_pipeline" / "processed"
 FRONTEND_DIR = PROJECT_DIR / "static_frontend"
 
 GVA_CSV_PATH = PROCESSED_DIR / "riyadh_gva_clean.csv"
+ANALYTICS_CSV_PATH = PROCESSED_DIR / "riyadh_economic_projection.csv"
 BOUNDARIES_PATH = PROCESSED_DIR / "saudi_boundaries.geojson"
+
+METRICS = {
+    "gva": ("GVA_Value", "Gross Value Added", "SAR million"),
+    "employment": ("Employment_Value", "Employment", "thousand jobs"),
+    "productivity": ("Productivity", "Productivity", "SAR thousand per job"),
+    "gva_share": ("GVA_Share", "GVA Share", "percent"),
+    "employment_share": ("Employment_Share", "Employment Share", "percent"),
+}
 
 
 # ============================================================
@@ -51,14 +60,14 @@ def initialize_database() -> duckdb.DuckDBPyConnection:
     Riyadh GVA CSV as a queryable view.
     """
 
-    if not GVA_CSV_PATH.exists():
+    if not ANALYTICS_CSV_PATH.exists():
         raise FileNotFoundError(
-            f"Processed GVA file not found: {GVA_CSV_PATH}"
+            f"Processed economic projection file not found: {ANALYTICS_CSV_PATH}"
         )
 
     connection = duckdb.connect(database=":memory:")
 
-    csv_path_sql = GVA_CSV_PATH.as_posix().replace("'", "''")
+    csv_path_sql = ANALYTICS_CSV_PATH.as_posix().replace("'", "''")
 
     connection.execute(
         f"""
@@ -68,7 +77,11 @@ def initialize_database() -> duckdb.DuckDBPyConnection:
             CAST(Year AS INTEGER) AS Year,
             CAST(NACE_Code AS VARCHAR) AS NACE_Code,
             CAST(Sector_Name AS VARCHAR) AS Sector_Name,
-            CAST(GVA_Value AS DOUBLE) AS GVA_Value
+            CAST(GVA_Value AS DOUBLE) AS GVA_Value,
+            CAST(Employment_Value AS DOUBLE) AS Employment_Value,
+            CAST(Productivity AS DOUBLE) AS Productivity,
+            CAST(GVA_Share AS DOUBLE) * 100 AS GVA_Share,
+            CAST(Employment_Share AS DOUBLE) * 100 AS Employment_Share
         FROM read_csv_auto(
             '{csv_path_sql}',
             header = true
@@ -78,6 +91,7 @@ def initialize_database() -> duckdb.DuckDBPyConnection:
             AND NACE_Code IS NOT NULL
             AND Sector_Name IS NOT NULL
             AND GVA_Value IS NOT NULL
+            AND Employment_Value IS NOT NULL
         """
     )
 
@@ -170,6 +184,19 @@ app = FastAPI(
 request_lock = asyncio.Lock()
 
 
+def metric_definition(metric: str) -> tuple[str, str, str]:
+    try:
+        return METRICS[metric]
+    except KeyError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Unsupported metric '{metric}'. "
+                f"Choose one of: {', '.join(METRICS)}."
+            ),
+        ) from error
+
+
 @app.middleware("http")
 async def serialize_database_requests(request, call_next):
     """
@@ -234,6 +261,7 @@ def health_check():
         "status": "healthy",
         "database": "connected",
         "gva_csv_available": GVA_CSV_PATH.exists(),
+        "analytics_csv_available": ANALYTICS_CSV_PATH.exists(),
         "boundaries_available": BOUNDARIES_PATH.exists(),
         "gva_record_count": record_count,
     }
@@ -309,11 +337,8 @@ def get_filters():
         "nace_codes": nace_codes,
         "sectors": sectors,
         "indicators": [
-            {
-                "code": "gva",
-                "name": "Gross Value Added",
-                "unit": "SAR million",
-            }
+            {"code": code, "name": name, "unit": unit}
+            for code, (_, name, unit) in METRICS.items()
         ],
     }
 
@@ -439,6 +464,7 @@ def get_kpis(
         default="Riyadh",
         description="Selected geography",
     ),
+    metric: str = Query(default="gva", description="Metric code"),
 ):
     """
     Return the main V1 KPI values for a selected NACE code and
@@ -449,15 +475,16 @@ def get_kpis(
     """
 
     connection = get_database()
+    metric_column, metric_name, metric_unit = metric_definition(metric)
 
     selected_record = connection.execute(
-        """
+        f"""
         SELECT
             Region,
             Year,
             NACE_Code,
             Sector_Name,
-            GVA_Value
+            {metric_column}
         FROM riyadh_gva
         WHERE
             LOWER(Region) = LOWER(?)
@@ -478,10 +505,10 @@ def get_kpis(
         )
 
     base_record = connection.execute(
-        """
+        f"""
         SELECT
             Year,
-            GVA_Value
+            {metric_column}
         FROM riyadh_gva
         WHERE
             LOWER(Region) = LOWER(?)
@@ -493,9 +520,9 @@ def get_kpis(
     ).fetchone()
 
     total_gva_record = connection.execute(
-        """
+        f"""
         SELECT
-            SUM(GVA_Value)
+            SUM({metric_column})
         FROM riyadh_gva
         WHERE
             LOWER(Region) = LOWER(?)
@@ -528,9 +555,12 @@ def get_kpis(
         "year": selected_record[1],
         "nace_code": selected_record[2],
         "sector_name": selected_record[3],
-        "indicator": "Gross Value Added",
+        "indicator": metric_name,
         "gva_value": round(selected_gva, 2),
-        "unit": "SAR million",
+        "metric_value": round(selected_gva, 2),
+        "metric": metric,
+        "metric_name": metric_name,
+        "unit": metric_unit,
         "base_year": base_year,
         "base_year_gva": round(base_gva, 2),
         "growth_from_base_percent": (
@@ -544,6 +574,23 @@ def get_kpis(
             else None
         ),
     }
+
+
+@app.get("/api/analysis", tags=["Economic Data"])
+def get_analysis(
+    year: int = Query(...),
+    nace_code: str = Query(...),
+    region: str = Query(default="Riyadh"),
+    metric: str = Query(default="gva"),
+):
+    """V2 alias for the selected metric KPI response."""
+
+    return get_kpis(
+        year=year,
+        nace_code=nace_code,
+        region=region,
+        metric=metric,
+    )
 
 
 # ============================================================
@@ -560,6 +607,7 @@ def get_sector_distribution(
         default="Riyadh",
         description="Selected geography",
     ),
+    metric: str = Query(default="gva", description="Metric code"),
 ):
     """
     Return aggregated sector GVA values and percentage shares.
@@ -569,13 +617,14 @@ def get_sector_distribution(
     """
 
     connection = get_database()
+    metric_column, metric_name, metric_unit = metric_definition(metric)
 
     records = connection.execute(
-        """
+        f"""
         WITH sector_totals AS (
             SELECT
                 Sector_Name,
-                SUM(GVA_Value) AS Sector_GVA
+                SUM({metric_column}) AS Sector_GVA
             FROM riyadh_gva
             WHERE
                 LOWER(Region) = LOWER(?)
@@ -618,7 +667,7 @@ def get_sector_distribution(
             "sector_name": row[0],
             "gva_value": round(float(row[1]), 2),
             "share_percent": round(float(row[2]), 2),
-            "unit": "SAR million",
+            "unit": metric_unit,
         }
         for row in records
     ]
@@ -631,11 +680,27 @@ def get_sector_distribution(
     return {
         "region": region,
         "year": year,
-        "indicator": "Gross Value Added",
-        "unit": "SAR million",
+        "indicator": metric_name,
+        "metric": metric,
+        "unit": metric_unit,
         "radar_maximum": round(maximum_value * 1.1, 2),
         "sectors": results,
     }
+
+
+@app.get("/api/distribution", tags=["Economic Data"])
+def get_distribution(
+    year: int = Query(...),
+    region: str = Query(default="Riyadh"),
+    metric: str = Query(default="gva"),
+):
+    """V2 alias for metric-dependent sector distribution."""
+
+    return get_sector_distribution(
+        year=year,
+        region=region,
+        metric=metric,
+    )
 
 
 # ============================================================
@@ -652,21 +717,23 @@ def get_gva_trend(
         default="Riyadh",
         description="Selected geography",
     ),
+    metric: str = Query(default="gva", description="Metric code"),
 ):
     """
     Return the full annual GVA trend for one NACE code.
     """
 
     connection = get_database()
+    metric_column, metric_name, metric_unit = metric_definition(metric)
 
     records = connection.execute(
-        """
+        f"""
         SELECT
             Region,
             Year,
             NACE_Code,
             Sector_Name,
-            GVA_Value
+            {metric_column}
         FROM riyadh_gva
         WHERE
             LOWER(Region) = LOWER(?)
@@ -689,12 +756,14 @@ def get_gva_trend(
         "region": records[0][0],
         "nace_code": records[0][2],
         "sector_name": records[0][3],
-        "indicator": "Gross Value Added",
-        "unit": "SAR million",
+        "indicator": metric_name,
+        "metric": metric,
+        "unit": metric_unit,
         "trend": [
             {
                 "year": row[1],
                 "gva_value": round(float(row[4]), 2),
+                "metric_value": round(float(row[4]), 2),
             }
             for row in records
         ],

@@ -264,6 +264,22 @@
                         <option value="gva">
                             GVA
                         </option>
+
+                        <option value="employment">
+                            Employment
+                        </option>
+
+                        <option value="productivity">
+                            Productivity
+                        </option>
+
+                        <option value="gva_share">
+                            GVA Share
+                        </option>
+
+                        <option value="employment_share">
+                            Employment Share
+                        </option>
                     </select>
 
                     <span
@@ -311,8 +327,8 @@
                     class="year-range"
                     type="range"
                     name="year"
-                    min="2020"
-                    max="2035"
+                    min="2023"
+                    max="2070"
                     value="2030"
                     step="1"
                     aria-label="Select projection year"
@@ -322,9 +338,9 @@
                     class="range-labels"
                     aria-hidden="true"
                 >
-                    <span>2020</span>
-                    <span>2030</span>
-                    <span>2035</span>
+                    <span id="minimum-year-label">2023</span>
+                    <span>2050</span>
+                    <span id="maximum-year-label">2070</span>
                 </div>
 
             </div>
@@ -364,59 +380,6 @@
                 </span>
             </button>
 
-
-            <!-- Time Period -->
-
-            <div class="control-group time-period-control">
-
-                <label for="time-period-range">
-                    Time Period
-                </label>
-
-                <input
-                    id="time-period-range"
-                    class="time-period-range"
-                    type="range"
-                    min="0"
-                    max="2"
-                    value="1"
-                    step="1"
-                    aria-label="Select time period"
-                >
-
-                <div
-                    class="range-labels"
-                    aria-hidden="true"
-                >
-                    <span>Low</span>
-                    <span>Medium</span>
-                    <span>High</span>
-                </div>
-
-            </div>
-
-
-            <!-- Comparison Region -->
-
-            <div class="comparison-row">
-
-                <label for="comparison-toggle">
-                    Comparison Region
-                </label>
-
-                <label class="toggle-switch">
-
-                    <input
-                        id="comparison-toggle"
-                        type="checkbox"
-                        disabled
-                    >
-
-                    <span class="toggle-slider"></span>
-
-                </label>
-
-            </div>
 
         </aside>
 
@@ -635,7 +598,7 @@
 
                         <article class="kpi-card kpi-card-green">
 
-                            <span class="kpi-label">
+                            <span id="kpi-metric-label" class="kpi-label">
                                 GVA
                             </span>
 
@@ -646,7 +609,7 @@
                                 -
                             </strong>
 
-                            <span class="kpi-unit">
+                            <span id="kpi-metric-unit" class="kpi-unit">
                                 SAR Million
                             </span>
 
@@ -655,8 +618,8 @@
 
                         <article class="kpi-card kpi-card-green">
 
-                            <span class="kpi-label">
-                                Base-Year GVA
+                            <span id="kpi-base-label" class="kpi-label">
+                                Base-Year
                             </span>
 
                             <strong
@@ -699,7 +662,7 @@
                         <article class="kpi-card kpi-card-purple">
 
                             <span class="kpi-label">
-                                Share of Total GVA
+                                Share of Riyadh Total
                             </span>
 
                             <strong
@@ -719,7 +682,7 @@
                         <article class="kpi-card kpi-card-green">
 
                             <span class="kpi-label">
-                                GVA Growth from Base Year
+                                Growth from Base Year
                             </span>
 
                             <strong
@@ -771,10 +734,10 @@
 
                         <div>
                             <h3 id="trend-chart-title">
-                                GVA Trend
+                                Metric Trend
                             </h3>
 
-                            <span>SAR Million</span>
+                            <span id="trend-unit-label">Selected metric</span>
                         </div>
 
                         <strong id="trend-highlight-value">
@@ -832,7 +795,7 @@
                                 <thead>
                                     <tr>
                                         <th>Sector</th>
-                                        <th>GVA</th>
+                                        <th id="sector-value-heading">Value</th>
                                         <th>Share</th>
                                     </tr>
                                 </thead>
@@ -853,7 +816,7 @@
                 <footer class="results-source-note">
 
                     <span>
-                        Values are shown in SAR million unless otherwise specified.
+                        Values are shown in the selected metric's unit.
                     </span>
 
                     <span>

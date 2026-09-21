@@ -1,161 +1,481 @@
 Region,Year,NACE_Code,Sector_Name,GVA_Value
-Riyadh,2020,A,Agriculture,16777.66
-Riyadh,2021,A,Agriculture,17843.89
-Riyadh,2022,A,Agriculture,16823.24
-Riyadh,2023,A,Agriculture,20750.1
-Riyadh,2024,A,Agriculture,27711.58
-Riyadh,2025,A,Agriculture,28713.38
-Riyadh,2026,A,Agriculture,28908.18
-Riyadh,2027,A,Agriculture,29409.36
-Riyadh,2028,A,Agriculture,30024.58
-Riyadh,2029,A,Agriculture,30643.63
-Riyadh,2030,A,Agriculture,31277.88
-Riyadh,2031,A,Agriculture,31879.89
-Riyadh,2032,A,Agriculture,32463.76
-Riyadh,2033,A,Agriculture,33030.15
-Riyadh,2034,A,Agriculture,33585.63
-Riyadh,2035,A,Agriculture,34076.71
-Riyadh,2020,B-E,Industry,95913.8
-Riyadh,2021,B-E,Industry,109747.2
-Riyadh,2022,B-E,Industry,145866.2
-Riyadh,2023,B-E,Industry,165038.25
-Riyadh,2024,B-E,Industry,191502.75
-Riyadh,2025,B-E,Industry,202334.15
-Riyadh,2026,B-E,Industry,215221.65
-Riyadh,2027,B-E,Industry,228616.3
-Riyadh,2028,B-E,Industry,242358.2
-Riyadh,2029,B-E,Industry,255760.7
-Riyadh,2030,B-E,Industry,269385.45
-Riyadh,2031,B-E,Industry,282494.8
-Riyadh,2032,B-E,Industry,294854.15
-Riyadh,2033,B-E,Industry,306306.6
-Riyadh,2034,B-E,Industry,316694.9
-Riyadh,2035,B-E,Industry,326406.35
-Riyadh,2020,F,Industry,95913.8
-Riyadh,2021,F,Industry,109747.2
-Riyadh,2022,F,Industry,145866.2
-Riyadh,2023,F,Industry,165038.25
-Riyadh,2024,F,Industry,191502.75
-Riyadh,2025,F,Industry,202334.15
-Riyadh,2026,F,Industry,215221.65
-Riyadh,2027,F,Industry,228616.3
-Riyadh,2028,F,Industry,242358.2
-Riyadh,2029,F,Industry,255760.7
-Riyadh,2030,F,Industry,269385.45
-Riyadh,2031,F,Industry,282494.8
-Riyadh,2032,F,Industry,294854.15
-Riyadh,2033,F,Industry,306306.6
-Riyadh,2034,F,Industry,316694.9
-Riyadh,2035,F,Industry,326406.35
-Riyadh,2020,G-I,Consumer services,108082.04000000001
-Riyadh,2021,G-I,Consumer services,123238.70000000001
-Riyadh,2022,G-I,Consumer services,138837.9
-Riyadh,2023,G-I,Consumer services,153632.6
-Riyadh,2024,G-I,Consumer services,165366.95
-Riyadh,2025,G-I,Consumer services,175828.65
-Riyadh,2026,G-I,Consumer services,182065.2
-Riyadh,2027,G-I,Consumer services,192055.09999999998
-Riyadh,2028,G-I,Consumer services,203314.05
-Riyadh,2029,G-I,Consumer services,213177.7
-Riyadh,2030,G-I,Consumer services,221633.5
-Riyadh,2031,G-I,Consumer services,229430.15
-Riyadh,2032,G-I,Consumer services,236488.05
-Riyadh,2033,G-I,Consumer services,243100.9
-Riyadh,2034,G-I,Consumer services,249369.19999999998
-Riyadh,2035,G-I,Consumer services,254873.90000000002
-Riyadh,2020,J,"Transport, storage, information & communication services",46815.44
-Riyadh,2021,J,"Transport, storage, information & communication services",51578.15
-Riyadh,2022,J,"Transport, storage, information & communication services",58501.5
-Riyadh,2023,J,"Transport, storage, information & communication services",63379.75
-Riyadh,2024,J,"Transport, storage, information & communication services",67143.15
-Riyadh,2025,J,"Transport, storage, information & communication services",71313.0
-Riyadh,2026,J,"Transport, storage, information & communication services",74964.0
-Riyadh,2027,J,"Transport, storage, information & communication services",79989.45
-Riyadh,2028,J,"Transport, storage, information & communication services",85911.6
-Riyadh,2029,J,"Transport, storage, information & communication services",90853.7
-Riyadh,2030,J,"Transport, storage, information & communication services",94835.5
-Riyadh,2031,J,"Transport, storage, information & communication services",98498.75
-Riyadh,2032,J,"Transport, storage, information & communication services",101657.2
-Riyadh,2033,J,"Transport, storage, information & communication services",104620.6
-Riyadh,2034,J,"Transport, storage, information & communication services",107436.65
-Riyadh,2035,J,"Transport, storage, information & communication services",109964.2
-Riyadh,2020,K,Financial & business services,50576.86666666667
-Riyadh,2021,K,Financial & business services,54834.166666666664
-Riyadh,2022,K,Financial & business services,60000.43333333333
-Riyadh,2023,K,Financial & business services,67947.66666666667
-Riyadh,2024,K,Financial & business services,73243.03333333334
-Riyadh,2025,K,Financial & business services,77386.96666666666
-Riyadh,2026,K,Financial & business services,80842.5
-Riyadh,2027,K,Financial & business services,85191.83333333333
-Riyadh,2028,K,Financial & business services,89777.56666666667
-Riyadh,2029,K,Financial & business services,93865.53333333333
-Riyadh,2030,K,Financial & business services,97677.86666666665
-Riyadh,2031,K,Financial & business services,101314.76666666666
-Riyadh,2032,K,Financial & business services,104642.93333333333
-Riyadh,2033,K,Financial & business services,107972.46666666667
-Riyadh,2034,K,Financial & business services,111212.46666666667
-Riyadh,2035,K,Financial & business services,114312.59999999999
-Riyadh,2020,L,Financial & business services,50576.86666666667
-Riyadh,2021,L,Financial & business services,54834.166666666664
-Riyadh,2022,L,Financial & business services,60000.43333333333
-Riyadh,2023,L,Financial & business services,67947.66666666667
-Riyadh,2024,L,Financial & business services,73243.03333333334
-Riyadh,2025,L,Financial & business services,77386.96666666666
-Riyadh,2026,L,Financial & business services,80842.5
-Riyadh,2027,L,Financial & business services,85191.83333333333
-Riyadh,2028,L,Financial & business services,89777.56666666667
-Riyadh,2029,L,Financial & business services,93865.53333333333
-Riyadh,2030,L,Financial & business services,97677.86666666665
-Riyadh,2031,L,Financial & business services,101314.76666666666
-Riyadh,2032,L,Financial & business services,104642.93333333333
-Riyadh,2033,L,Financial & business services,107972.46666666667
-Riyadh,2034,L,Financial & business services,111212.46666666667
-Riyadh,2035,L,Financial & business services,114312.59999999999
-Riyadh,2020,M_N,Financial & business services,50576.86666666667
-Riyadh,2021,M_N,Financial & business services,54834.166666666664
-Riyadh,2022,M_N,Financial & business services,60000.43333333333
-Riyadh,2023,M_N,Financial & business services,67947.66666666667
-Riyadh,2024,M_N,Financial & business services,73243.03333333334
-Riyadh,2025,M_N,Financial & business services,77386.96666666666
-Riyadh,2026,M_N,Financial & business services,80842.5
-Riyadh,2027,M_N,Financial & business services,85191.83333333333
-Riyadh,2028,M_N,Financial & business services,89777.56666666667
-Riyadh,2029,M_N,Financial & business services,93865.53333333333
-Riyadh,2030,M_N,Financial & business services,97677.86666666665
-Riyadh,2031,M_N,Financial & business services,101314.76666666666
-Riyadh,2032,M_N,Financial & business services,104642.93333333333
-Riyadh,2033,M_N,Financial & business services,107972.46666666667
-Riyadh,2034,M_N,Financial & business services,111212.46666666667
-Riyadh,2035,M_N,Financial & business services,114312.59999999999
-Riyadh,2020,O-Q,Public services,173693.3
-Riyadh,2021,O-Q,Public services,175359.3
-Riyadh,2022,O-Q,Public services,194818.7
-Riyadh,2023,O-Q,Public services,207212.8
-Riyadh,2024,O-Q,Public services,213054.5
-Riyadh,2025,O-Q,Public services,218488.8
-Riyadh,2026,O-Q,Public services,221311.2
-Riyadh,2027,O-Q,Public services,225475.5
-Riyadh,2028,O-Q,Public services,231503.9
-Riyadh,2029,O-Q,Public services,237265.6
-Riyadh,2030,O-Q,Public services,242818.3
-Riyadh,2031,O-Q,Public services,247886.4
-Riyadh,2032,O-Q,Public services,252686.6
-Riyadh,2033,O-Q,Public services,257443.0
-Riyadh,2034,O-Q,Public services,262133.6
-Riyadh,2035,O-Q,Public services,266350.7
-Riyadh,2020,R-U,Consumer services,61266.6
-Riyadh,2021,R-U,Consumer services,71660.55
-Riyadh,2022,R-U,Consumer services,80336.4
-Riyadh,2023,R-U,Consumer services,90252.85
-Riyadh,2024,R-U,Consumer services,98223.8
-Riyadh,2025,R-U,Consumer services,104515.65
-Riyadh,2026,R-U,Consumer services,107101.2
-Riyadh,2027,R-U,Consumer services,112065.65
-Riyadh,2028,R-U,Consumer services,117402.45
-Riyadh,2029,R-U,Consumer services,122324.0
-Riyadh,2030,R-U,Consumer services,126798.0
-Riyadh,2031,R-U,Consumer services,130931.4
-Riyadh,2032,R-U,Consumer services,134830.85
-Riyadh,2033,R-U,Consumer services,138480.3
-Riyadh,2034,R-U,Consumer services,141932.55
-Riyadh,2035,R-U,Consumer services,144909.7
+Riyadh,2023,A,Agriculture,2.0750099999999754
+Riyadh,2023,B-E,Industry,16.50382500000063
+Riyadh,2023,F,Construction,16.5038250000001
+Riyadh,2023,G-I,"Wholesale, retail, transport, accommodation and food",15.363260000000105
+Riyadh,2023,J,Information and communication,6.3379749999998625
+Riyadh,2023,K,Financial and insurance activities,6.79476666666635
+Riyadh,2023,L,Real estate activities,6.7947666666670425
+Riyadh,2023,M_N,"Professional, scientific, technical, administration and support",6.794766666666823
+Riyadh,2023,O-Q,"Public administration, defence, education, health and social work",20.72127999999963
+Riyadh,2023,R-U,Other services,9.025285000000467
+Riyadh,2024,A,Agriculture,3.5524566695017987
+Riyadh,2024,B-E,Industry,24.58377936599343
+Riyadh,2024,F,Construction,24.58396424483947
+Riyadh,2024,G-I,"Wholesale, retail, transport, accommodation and food",21.228659298250605
+Riyadh,2024,J,Information and communication,8.619221044164359
+Riyadh,2024,K,Financial and insurance activities,9.399933789881729
+Riyadh,2024,L,Real estate activities,9.401923791342773
+Riyadh,2024,M_N,"Professional, scientific, technical, administration and support",9.402451549640757
+Riyadh,2024,O-Q,"Public administration, defence, education, health and social work",27.34931301396139
+Riyadh,2024,R-U,Other services,12.608126046628906
+Riyadh,2025,A,Agriculture,4.716506588656583
+Riyadh,2025,B-E,Industry,33.34172720850382
+Riyadh,2025,F,Construction,33.34229974534896
+Riyadh,2025,G-I,"Wholesale, retail, transport, accommodation and food",28.974038929977482
+Riyadh,2025,J,Information and communication,11.750893181426443
+Riyadh,2025,K,Financial and insurance activities,12.744529811545707
+Riyadh,2025,L,Real estate activities,12.750690016891786
+Riyadh,2025,M_N,"Professional, scientific, technical, administration and support",12.752324295462335
+Riyadh,2025,O-Q,"Public administration, defence, education, health and social work",36.00038600235923
+Riyadh,2025,R-U,Other services,17.21905457468681
+Riyadh,2026,A,Agriculture,6.080947022437303
+Riyadh,2026,B-E,Industry,45.52120313051243
+Riyadh,2026,F,Construction,45.52254857179507
+Riyadh,2026,G-I,"Wholesale, retail, transport, accommodation and food",38.50840817491146
+Riyadh,2026,J,Information and communication,15.85446994562935
+Riyadh,2026,K,Financial and insurance activities,17.081070608333356
+Riyadh,2026,L,Real estate activities,17.09528009872051
+Riyadh,2026,M_N,"Professional, scientific, technical, administration and support",17.099051483121833
+Riyadh,2026,O-Q,"Public administration, defence, education, health and social work",46.80160295916242
+Riyadh,2026,R-U,Other services,22.644650345391508
+Riyadh,2027,A,Agriculture,7.916361989223198
+Riyadh,2027,B-E,Industry,62.05790872911218
+Riyadh,2027,F,Construction,62.06072896100985
+Riyadh,2027,G-I,"Wholesale, retail, transport, accommodation and food",52.13352536032609
+Riyadh,2027,J,Information and communication,21.710927347849296
+Riyadh,2027,K,Financial and insurance activities,23.08832782293974
+Riyadh,2027,L,Real estate activities,23.11785599726757
+Riyadh,2027,M_N,"Professional, scientific, technical, administration and support",23.12569759074884
+Riyadh,2027,O-Q,"Public administration, defence, education, health and social work",61.19007734337026
+Riyadh,2027,R-U,Other services,30.403379897351687
+Riyadh,2028,A,Agriculture,10.33219325625421
+Riyadh,2028,B-E,Industry,84.42088983971627
+Riyadh,2028,F,Construction,84.4264468329088
+Riyadh,2028,G-I,"Wholesale, retail, transport, accommodation and food",70.82090767716632
+Riyadh,2028,J,Information and communication,29.921260029755583
+Riyadh,2028,K,Financial and insurance activities,31.199894689017178
+Riyadh,2028,L,Real estate activities,31.257681366689898
+Riyadh,2028,M_N,"Professional, scientific, technical, administration and support",31.273038496088553
+Riyadh,2028,O-Q,"Public administration, defence, education, health and social work",80.61088005818647
+Riyadh,2028,R-U,Other services,40.862123474423576
+Riyadh,2029,A,Agriculture,13.464935830276984
+Riyadh,2029,B-E,Industry,114.30137573144401
+Riyadh,2029,F,Construction,114.31188652211867
+Riyadh,2029,G-I,"Wholesale, retail, transport, accommodation and food",95.27129268181292
+Riyadh,2029,J,Information and communication,40.594824810572625
+Riyadh,2029,K,Financial and insurance activities,41.813626600309235
+Riyadh,2029,L,Real estate activities,41.92179350724805
+Riyadh,2029,M_N,"Professional, scientific, technical, administration and support",41.950566150885116
+Riyadh,2029,O-Q,"Public administration, defence, education, health and social work",105.98229420794075
+Riyadh,2029,R-U,Other services,54.60628712829743
+Riyadh,2030,A,Agriculture,17.521884610995336
+Riyadh,2030,B-E,Industry,154.42540022294165
+Riyadh,2030,F,Construction,154.44477312981516
+Riyadh,2030,G-I,"Wholesale, retail, transport, accommodation and food",127.05261464104179
+Riyadh,2030,J,Information and communication,54.34922069165165
+Riyadh,2030,K,Financial and insurance activities,55.747305997205736
+Riyadh,2030,L,Real estate activities,55.94399255253349
+Riyadh,2030,M_N,"Professional, scientific, technical, administration and support",55.99637382686658
+Riyadh,2030,O-Q,"Public administration, defence, education, health and social work",139.10000275073128
+Riyadh,2030,R-U,Other services,72.57603248605774
+Riyadh,2031,A,Agriculture,22.724428796045984
+Riyadh,2031,B-E,Industry,207.6614211869535
+Riyadh,2031,F,Construction,207.6963834973424
+Riyadh,2031,G-I,"Wholesale, retail, transport, accommodation and food",168.65556900723394
+Riyadh,2031,J,Information and communication,72.37891622618812
+Riyadh,2031,K,Financial and insurance activities,74.03679518848355
+Riyadh,2031,L,Real estate activities,74.38723677491804
+Riyadh,2031,M_N,"Professional, scientific, technical, administration and support",74.48070783922627
+Riyadh,2031,O-Q,"Public administration, defence, education, health and social work",182.05265721211012
+Riyadh,2031,R-U,Other services,96.05027661563898
+Riyadh,2032,A,Agriculture,29.372450548183643
+Riyadh,2032,B-E,Industry,277.83808202600585
+Riyadh,2032,F,Construction,277.9001232882903
+Riyadh,2032,G-I,"Wholesale, retail, transport, accommodation and food",222.8435856167175
+Riyadh,2032,J,Information and communication,95.74259013448275
+Riyadh,2032,K,Financial and insurance activities,97.83373257043263
+Riyadh,2032,L,Real estate activities,98.44764713979333
+Riyadh,2032,M_N,"Professional, scientific, technical, administration and support",98.61171109520238
+Riyadh,2032,O-Q,"Public administration, defence, education, health and social work",237.81264496594343
+Riyadh,2032,R-U,Other services,126.70481173342196
+Riyadh,2033,A,Agriculture,37.816222273090695
+Riyadh,2033,B-E,Industry,369.8054089971534
+Riyadh,2033,F,Construction,369.91397608788486
+Riyadh,2033,G-I,"Wholesale, retail, transport, accommodation and food",293.5025629122588
+Riyadh,2033,J,Information and communication,126.22582028014321
+Riyadh,2033,K,Financial and insurance activities,129.02029407307447
+Riyadh,2033,L,Real estate activities,130.08410961622857
+Riyadh,2033,M_N,"Professional, scientific, technical, administration and support",130.36911192429662
+Riyadh,2033,O-Q,"Public administration, defence, education, health and social work",310.3123127962312
+Riyadh,2033,R-U,Other services,166.59170867485196
+Riyadh,2034,A,Agriculture,48.47058084502576
+Riyadh,2034,B-E,Industry,489.58262610986515
+Riyadh,2034,F,Construction,489.77032633959084
+Riyadh,2034,G-I,"Wholesale, retail, transport, accommodation and food",385.51274793078755
+Riyadh,2034,J,Information and communication,165.94496691464903
+Riyadh,2034,K,Financial and insurance activities,169.63214782463817
+Riyadh,2034,L,Real estate activities,171.45736591663723
+Riyadh,2034,M_N,"Professional, scientific, technical, administration and support",171.94789961221724
+Riyadh,2034,O-Q,"Public administration, defence, education, health and social work",404.3850717095858
+Riyadh,2034,R-U,Other services,218.39468992096516
+Riyadh,2035,A,Agriculture,61.6985499695306
+Riyadh,2035,B-E,Industry,645.6156088297893
+Riyadh,2035,F,Construction,645.9371263875535
+Riyadh,2035,G-I,"Wholesale, retail, transport, accommodation and food",504.1445523391056
+Riyadh,2035,J,Information and communication,217.26109324485904
+Riyadh,2035,K,Financial and insurance activities,222.2042143750454
+Riyadh,2035,L,Real estate activities,225.3069757349852
+Riyadh,2035,M_N,"Professional, scientific, technical, administration and support",226.14420985980382
+Riyadh,2035,O-Q,"Public administration, defence, education, health and social work",525.393233949172
+Riyadh,2035,R-U,Other services,284.8949963647181
+Riyadh,2036,A,Agriculture,77.92005208969098
+Riyadh,2036,B-E,Industry,848.339285995311
+Riyadh,2036,F,Construction,848.8856326943832
+Riyadh,2036,G-I,"Wholesale, retail, transport, accommodation and food",656.8222451707062
+Riyadh,2036,J,Information and communication,283.47446163091985
+Riyadh,2036,K,Financial and insurance activities,289.9342683890349
+Riyadh,2036,L,Real estate activities,295.1636652347058
+Riyadh,2036,M_N,"Professional, scientific, technical, administration and support",296.5819457204174
+Riyadh,2036,O-Q,"Public administration, defence, education, health and social work",680.3919875858596
+Riyadh,2036,R-U,Other services,370.00657448146023
+Riyadh,2037,A,Agriculture,97.54163791121978
+Riyadh,2037,B-E,Industry,1110.5592782998713
+Riyadh,2037,F,Construction,1111.4806434361353
+Riyadh,2037,G-I,"Wholesale, retail, transport, accommodation and food",852.661782264254
+Riyadh,2037,J,Information and communication,368.6402894966899
+Riyadh,2037,K,Financial and insurance activities,376.62262213663325
+Riyadh,2037,L,Real estate activities,385.3603720646282
+Riyadh,2037,M_N,"Professional, scientific, technical, administration and support",387.74546497543867
+Riyadh,2037,O-Q,"Public administration, defence, education, health and social work",878.2642773446664
+Riyadh,2037,R-U,Other services,478.45271021513224
+Riyadh,2038,A,Agriculture,120.98700211533277
+Riyadh,2038,B-E,Industry,1448.9736309812863
+Riyadh,2038,F,Construction,1450.516722697455
+Riyadh,2038,G-I,"Wholesale, retail, transport, accommodation and food",1103.4583643914068
+Riyadh,2038,J,Information and communication,477.92679129646393
+Riyadh,2038,K,Financial and insurance activities,487.1587625985512
+Riyadh,2038,L,Real estate activities,501.6392165369996
+Riyadh,2038,M_N,"Professional, scientific, technical, administration and support",505.62399979192776
+Riyadh,2038,O-Q,"Public administration, defence, education, health and social work",1130.5789587806482
+Riyadh,2038,R-U,Other services,616.3180231294473
+Riyadh,2039,A,Agriculture,148.567062691698
+Riyadh,2039,B-E,Industry,1884.6129129438168
+Riyadh,2039,F,Construction,1887.1801698461577
+Riyadh,2039,G-I,"Wholesale, retail, transport, accommodation and food",1423.5795577017914
+Riyadh,2039,J,Information and communication,617.5428928271848
+Riyadh,2039,K,Financial and insurance activities,627.0728761454645
+Riyadh,2039,L,Real estate activities,650.8581643811241
+Riyadh,2039,M_N,"Professional, scientific, technical, administration and support",657.470148594079
+Riyadh,2039,O-Q,"Public administration, defence, education, health and social work",1451.4479149513813
+Riyadh,2039,R-U,Other services,790.9037303829859
+Riyadh,2040,A,Agriculture,180.30063496534987
+Riyadh,2040,B-E,Industry,2441.8079006429216
+Riyadh,2040,F,Construction,2446.0470819350676
+Riyadh,2040,G-I,"Wholesale, retail, transport, accommodation and food",1830.2693546599667
+Riyadh,2040,J,Information and communication,794.9458978016297
+Riyadh,2040,K,Financial and insurance activities,802.9613264089367
+Riyadh,2040,L,Real estate activities,841.6610128397484
+Riyadh,2040,M_N,"Professional, scientific, technical, administration and support",852.5553488786387
+Riyadh,2040,O-Q,"Public administration, defence, education, health and social work",1857.2291506421157
+Riyadh,2040,R-U,Other services,1010.6637335341683
+Riyadh,2041,A,Agriculture,215.91482603061456
+Riyadh,2041,B-E,Industry,3149.496539879042
+Riyadh,2041,F,Construction,3156.436989522192
+Riyadh,2041,G-I,"Wholesale, retail, transport, accommodation and food",2344.640137811894
+Riyadh,2041,J,Information and communication,1019.4984073199952
+Riyadh,2041,K,Financial and insurance activities,1022.2231497377668
+Riyadh,2041,L,Real estate activities,1084.5267200988956
+Riyadh,2041,M_N,"Professional, scientific, technical, administration and support",1102.3401777572199
+Riyadh,2041,O-Q,"Public administration, defence, education, health and social work",2366.7589829644066
+Riyadh,2041,R-U,Other services,1285.3082634709815
+Riyadh,2042,A,Agriculture,254.78172677205868
+Riyadh,2042,B-E,Industry,4040.6832655736143
+Riyadh,2042,F,Construction,4051.9342064432503
+Riyadh,2042,G-I,"Wholesale, retail, transport, accommodation and food",2991.3824819738275
+Riyadh,2042,J,Information and communication,1302.2343268628238
+Riyadh,2042,K,Financial and insurance activities,1292.5749442039782
+Riyadh,2042,L,Real estate activities,1391.6592583566098
+Riyadh,2042,M_N,"Professional, scientific, technical, administration and support",1420.530475686597
+Riyadh,2042,O-Q,"Public administration, defence, education, health and social work",3000.721461617321
+Riyadh,2042,R-U,Other services,1625.4490963142528
+Riyadh,2043,A,Agriculture,295.97769927250414
+Riyadh,2043,B-E,Industry,5153.259697452731
+Riyadh,2043,F,Construction,5171.293521505339
+Riyadh,2043,G-I,"Wholesale, retail, transport, accommodation and food",3796.520187707309
+Riyadh,2043,J,Information and communication,1654.3884220028992
+Riyadh,2043,K,Financial and insurance activities,1620.4105727644842
+Riyadh,2043,L,Real estate activities,1775.6453850370538
+Riyadh,2043,M_N,"Professional, scientific, technical, administration and support",1821.9217392425123
+Riyadh,2043,O-Q,"Public administration, defence, education, health and social work",3781.0729664175806
+Riyadh,2043,R-U,Other services,2041.4973583701965
+Riyadh,2044,A,Agriculture,338.35244796135055
+Riyadh,2044,B-E,Industry,6526.144185175995
+Riyadh,2044,F,Construction,6554.667878383808
+Riyadh,2044,G-I,"Wholesale, retail, transport, accommodation and food",4788.148438491187
+Riyadh,2044,J,Information and communication,2087.9627360441177
+Riyadh,2044,K,Financial and insurance activities,2010.8581110711516
+Riyadh,2044,L,Real estate activities,2249.8120633678554
+Riyadh,2044,M_N,"Professional, scientific, technical, administration and support",2323.0013682641925
+Riyadh,2044,O-Q,"Public administration, defence, education, health and social work",4729.856900931738
+Riyadh,2044,R-U,Other services,2543.452885276136
+Riyadh,2045,A,Agriculture,380.65691406345934
+Riyadh,2045,B-E,Industry,8202.817182952538
+Riyadh,2045,F,Construction,8247.263283278395
+Riyadh,2045,G-I,"Wholesale, retail, transport, accommodation and food",5993.338232692914
+Riyadh,2045,J,Information and communication,2614.1593481552695
+Riyadh,2045,K,Financial and insurance activities,2465.7347513778695
+Riyadh,2045,L,Real estate activities,2826.0230514892555
+Riyadh,2045,M_N,"Professional, scientific, technical, administration and support",2939.9179792356267
+Riyadh,2045,O-Q,"Public administration, defence, education, health and social work",5865.833267639257
+Riyadh,2045,R-U,Other services,3139.1386858563446
+Riyadh,2046,A,Agriculture,421.6116669814753
+Riyadh,2046,B-E,Industry,10223.95985629326
+Riyadh,2046,F,Construction,10292.04101802592
+Riyadh,2046,G-I,"Wholesale, retail, transport, accommodation and food",7433.0553714888465
+Riyadh,2046,J,Information and communication,3241.086454670013
+Riyadh,2046,K,Financial and insurance activities,2982.263687932619
+Riyadh,2046,L,Real estate activities,3512.68392912161
+Riyadh,2046,M_N,"Professional, scientific, technical, administration and support",3686.5267681544187
+Riyadh,2046,O-Q,"Public administration, defence, education, health and social work",7200.692173550512
+Riyadh,2046,R-U,Other services,3831.5461707950194
+Riyadh,2047,A,Agriculture,460.1796348713939
+Riyadh,2047,B-E,Industry,12604.162574759452
+Riyadh,2047,F,Construction,12706.271453184323
+Riyadh,2047,G-I,"Wholesale, retail, transport, accommodation and food",9126.840462261956
+Riyadh,2047,J,Information and communication,3977.5300880758205
+Riyadh,2047,K,Financial and insurance activities,3557.0537290772068
+Riyadh,2047,L,Real estate activities,4318.276343549892
+Riyadh,2047,M_N,"Professional, scientific, technical, administration and support",4578.032274666152
+Riyadh,2047,O-Q,"Public administration, defence, education, health and social work",8740.441819789723
+Riyadh,2047,R-U,Other services,4620.0102354176115
+Riyadh,2048,A,Agriculture,495.4862615271877
+Riyadh,2048,B-E,Industry,15357.120801430614
+Riyadh,2048,F,Construction,15506.736739028041
+Riyadh,2048,G-I,"Wholesale, retail, transport, accommodation and food",11073.1325983693
+Riyadh,2048,J,Information and communication,4821.113744016049
+Riyadh,2048,K,Financial and insurance activities,4177.275774516607
+Riyadh,2048,L,Real estate activities,5239.070273020761
+Riyadh,2048,M_N,"Professional, scientific, technical, administration and support",5617.659359636801
+Riyadh,2048,O-Q,"Public administration, defence, education, health and social work",10472.189318162415
+Riyadh,2048,R-U,Other services,5494.1678789293765
+Riyadh,2049,A,Agriculture,527.0692987903273
+Riyadh,2049,B-E,Industry,18449.417790989748
+Riyadh,2049,F,Construction,18662.793688177895
+Riyadh,2049,G-I,"Wholesale, retail, transport, accommodation and food",13265.127849897162
+Riyadh,2049,J,Information and communication,5769.63086059656
+Riyadh,2049,K,Financial and insurance activities,4832.215036562881
+Riyadh,2049,L,Real estate activities,6270.602827344875
+Riyadh,2049,M_N,"Professional, scientific, technical, administration and support",6807.891557238922
+Riyadh,2049,O-Q,"Public administration, defence, education, health and social work",12374.030943640339
+Riyadh,2049,R-U,Other services,6439.650445003989
+Riyadh,2050,A,Agriculture,554.7087941197548
+Riyadh,2050,B-E,Industry,21838.66288333746
+Riyadh,2050,F,Construction,22134.284956339776
+Riyadh,2050,G-I,"Wholesale, retail, transport, accommodation and food",15668.655813835798
+Riyadh,2050,J,Information and communication,6807.683590163988
+Riyadh,2050,K,Financial and insurance activities,5504.680344774701
+Riyadh,2050,L,Real estate activities,7394.874716944779
+Riyadh,2050,M_N,"Professional, scientific, technical, administration and support",8135.547736348336
+Riyadh,2050,O-Q,"Public administration, defence, education, health and social work",14402.805987640488
+Riyadh,2050,R-U,Other services,7432.6241576933035
+Riyadh,2051,A,Agriculture,579.3051241882667
+Riyadh,2051,B-E,Industry,25503.03758679151
+Riyadh,2051,F,Construction,25901.06443396072
+Riyadh,2051,G-I,"Wholesale, retail, transport, accommodation and food",18230.7301582202
+Riyadh,2051,J,Information and communication,7907.114937447874
+Riyadh,2051,K,Financial and insurance activities,6176.044891098121
+Riyadh,2051,L,Real estate activities,8584.678493850732
+Riyadh,2051,M_N,"Professional, scientific, technical, administration and support",9574.715787396637
+Riyadh,2051,O-Q,"Public administration, defence, education, health and social work",16517.807185862872
+Riyadh,2051,R-U,Other services,8449.16043459067
+Riyadh,2052,A,Agriculture,600.541361675953
+Riyadh,2052,B-E,Industry,29323.269409504974
+Riyadh,2052,F,Construction,29842.771119148627
+Riyadh,2052,G-I,"Wholesale, retail, transport, accommodation and food",20885.003948335147
+Riyadh,2052,J,Information and communication,9042.157022316109
+Riyadh,2052,K,Financial and insurance activities,6832.573150276342
+Riyadh,2052,L,Real estate activities,9812.129642453428
+Riyadh,2052,M_N,"Professional, scientific, technical, administration and support",11094.923969162697
+Riyadh,2052,O-Q,"Public administration, defence, education, health and social work",18650.622192557148
+Riyadh,2052,R-U,Other services,9457.937318796488
+Riyadh,2053,A,Agriculture,618.7586408473145
+Riyadh,2053,B-E,Industry,33196.65338664858
+Riyadh,2053,F,Construction,33853.935946132624
+Riyadh,2053,G-I,"Wholesale, retail, transport, accommodation and food",23557.448610186213
+Riyadh,2053,J,Information and communication,10181.860842823122
+Riyadh,2053,K,Financial and insurance activities,7462.565900224929
+Riyadh,2053,L,Real estate activities,11046.564822697044
+Riyadh,2053,M_N,"Professional, scientific, technical, administration and support",12658.413790115914
+Riyadh,2053,O-Q,"Public administration, defence, education, health and social work",20740.210955173134
+Riyadh,2053,R-U,Other services,10431.987867011487
+Riyadh,2054,A,Agriculture,634.3438829387821
+Riyadh,2054,B-E,Industry,37021.04049909094
+Riyadh,2054,F,Construction,37827.918335688584
+Riyadh,2054,G-I,"Wholesale, retail, transport, accommodation and food",26175.46547131416
+Riyadh,2054,J,Information and communication,11296.622266474342
+Riyadh,2054,K,Financial and insurance activities,8058.200740844097
+Riyadh,2054,L,Real estate activities,12259.69059267314
+Riyadh,2054,M_N,"Professional, scientific, technical, administration and support",14226.323400970614
+Riyadh,2054,O-Q,"Public administration, defence, education, health and social work",22732.405856552818
+Riyadh,2054,R-U,Other services,11349.273850689331
+Riyadh,2055,A,Agriculture,647.6882551265242
+Riyadh,2055,B-E,Industry,40706.680391535636
+Riyadh,2055,F,Construction,41669.436676997866
+Riyadh,2055,G-I,"Wholesale, retail, transport, accommodation and food",28676.226605173397
+Riyadh,2055,J,Information and communication,12361.47597218323
+Riyadh,2055,K,Financial and insurance activities,8615.511749232472
+Riyadh,2055,L,Real estate activities,13428.517730734002
+Riyadh,2055,M_N,"Professional, scientific, technical, administration and support",15763.309105267292
+Riyadh,2055,O-Q,"Public administration, defence, education, health and social work",24585.332725252476
+Riyadh,2055,R-U,Other services,12194.428211386012
+Riyadh,2056,A,Agriculture,659.1603631984631
+Riyadh,2056,B-E,Industry,44184.752436606075
+Riyadh,2056,F,Construction,45303.98157370241
+Riyadh,2056,G-I,"Wholesale, retail, transport, accommodation and food",31012.514483085168
+Riyadh,2056,J,Information and communication,13358.223181916072
+Riyadh,2056,K,Financial and insurance activities,9133.838141044984
+Riyadh,2056,L,Real estate activities,14536.994624151843
+Riyadh,2056,M_N,"Professional, scientific, technical, administration and support",17241.10708574576
+Riyadh,2056,O-Q,"Public administration, defence, education, health and social work",26272.06660329776
+Riyadh,2056,R-U,Other services,12959.145869096652
+Riyadh,2057,A,Agriculture,669.0914693235285
+Riyadh,2057,B-E,Industry,47411.18809804308
+Riyadh,2057,F,Construction,48682.44541434527
+Riyadh,2057,G-I,"Wholesale, retail, transport, accommodation and food",33155.13756549745
+Riyadh,2057,J,Information and communication,14276.125381024012
+Riyadh,2057,K,Financial and insurance activities,9615.005789842826
+Riyadh,2057,L,Real estate activities,15576.258373419108
+Riyadh,2057,M_N,"Professional, scientific, technical, administration and support",18640.39774028301
+Riyadh,2057,O-Q,"Public administration, defence, education, health and social work",27780.487136828506
+Riyadh,2057,R-U,Other services,13641.455035808976
+Riyadh,2058,A,Agriculture,677.7694095532136
+Riyadh,2058,B-E,Industry,50365.98432929245
+Riyadh,2058,F,Construction,51780.9706182489
+Riyadh,2058,G-I,"Wholesale, retail, transport, accommodation and food",35092.14124836825
+Riyadh,2058,J,Information and communication,15111.348177699743
+Riyadh,2058,K,Financial and insurance activities,10062.470674521586
+Riyadh,2058,L,Real estate activities,16543.8076946252
+Riyadh,2058,M_N,"Professional, scientific, technical, administration and support",19950.937230271484
+Riyadh,2058,O-Q,"Public administration, defence, education, health and social work",29111.054844896986
+Riyadh,2058,R-U,Other services,14244.320696318171
+Riyadh,2059,A,Agriculture,685.4381829387117
+Riyadh,2059,B-E,Industry,53049.33130893687
+Riyadh,2059,F,Construction,54597.27717864753
+Riyadh,2059,G-I,"Wholesale, retail, transport, accommodation and food",36825.812283532534
+Riyadh,2059,J,Information and communication,15865.607646347995
+Riyadh,2059,K,Financial and insurance activities,10480.57164950988
+Riyadh,2059,L,Real estate activities,17442.07329264313
+Riyadh,2059,M_N,"Professional, scientific, technical, administration and support",21170.383605452607
+Riyadh,2059,O-Q,"Public administration, defence, education, health and social work",30273.53165687856
+Riyadh,2059,R-U,Other services,14774.040964919213
+Riyadh,2060,A,Agriculture,692.3008445828233
+Riyadh,2060,B-E,Industry,55476.23480719859
+Riyadh,2060,F,Construction,57145.20439804733
+Riyadh,2060,G-I,"Wholesale, retail, transport, accommodation and food",38368.69711273279
+Riyadh,2060,J,Information and communication,16544.513021534072
+Riyadh,2060,K,Financial and insurance activities,10873.957663335921
+Riyadh,2060,L,Real estate activities,18276.8323293572
+Riyadh,2060,M_N,"Professional, scientific, technical, administration and support",22302.429340701437
+Riyadh,2060,O-Q,"Public administration, defence, education, health and social work",31283.561972010302
+Riyadh,2060,R-U,Other services,15238.772767940583
+Riyadh,2061,A,Agriculture,698.5240337836698
+Riyadh,2061,B-E,Industry,57671.05410185452
+Riyadh,2061,F,Construction,59448.9988132005
+Riyadh,2061,G-I,"Wholesale, retail, transport, accommodation and food",39739.64251577685
+Riyadh,2061,J,Information and communication,17155.985633732507
+Riyadh,2061,K,Financial and insurance activities,11247.19535416509
+Riyadh,2061,L,Real estate activities,19055.7749492573
+Riyadh,2061,M_N,"Professional, scientific, technical, administration and support",23354.792063311277
+Riyadh,2061,O-Q,"Public administration, defence, education, health and social work",32159.713288134233
+Riyadh,2061,R-U,Other services,15647.362953478372
+Riyadh,2062,A,Agriculture,704.2430579711021
+Riyadh,2062,B-E,Industry,59662.84115499584
+Riyadh,2062,F,Construction,61538.343753226836
+Riyadh,2062,G-I,"Wholesale, retail, transport, accommodation and food",40960.47023815232
+Riyadh,2062,J,Information and communication,17708.967623835655
+Riyadh,2062,K,Financial and insurance activities,11604.530790165605
+Riyadh,2062,L,Real estate activities,19787.374635035605
+Riyadh,2062,M_N,"Professional, scientific, technical, administration and support",24337.431012987912
+Riyadh,2062,O-Q,"Public administration, defence, education, health and social work",32921.240871771384
+Riyadh,2062,R-U,Other services,16008.529374878613
+Riyadh,2063,A,Agriculture,709.566892754904
+Riyadh,2063,B-E,Industry,61481.84520322867
+Riyadh,2063,F,Construction,63444.57189425525
+Riyadh,2063,G-I,"Wholesale, retail, transport, accommodation and food",42053.521567690776
+Riyadh,2063,J,Information and communication,18212.4895666855
+Riyadh,2063,K,Financial and insurance activities,11949.767809831803
+Riyadh,2063,L,Real estate activities,20480.09397643933
+Riyadh,2063,M_N,"Professional, scientific, technical, administration and support",25261.161154273334
+Riyadh,2063,O-Q,"Public administration, defence, education, health and social work",33586.59537983496
+Riyadh,2063,R-U,Other services,16330.35630691495
+Riyadh,2064,A,Agriculture,714.5827594389176
+Riyadh,2064,B-E,Industry,63157.18152367644
+Riyadh,2064,F,Construction,65198.09891567039
+Riyadh,2064,G-I,"Wholesale, retail, transport, accommodation and food",43040.05055313172
+Riyadh,2064,J,Information and communication,18675.07337395313
+Riyadh,2064,K,Financial and insurance activities,12286.226476759408
+Riyadh,2064,L,Real estate activities,21141.887484598137
+Riyadh,2064,M_N,"Professional, scientific, technical, administration and support",26136.691394591697
+Riyadh,2064,O-Q,"Public administration, defence, education, health and social work",34172.558443358575
+Riyadh,2064,R-U,Other services,16620.034312884593
+Riyadh,2065,A,Agriculture,719.360133499463
+Riyadh,2065,B-E,Industry,64715.47221576458
+Riyadh,2065,F,Construction,66826.89641257536
+Riyadh,2065,G-I,"Wholesale, retail, transport, accommodation and food",43939.314417646885
+Riyadh,2065,J,Information and communication,19104.403566001514
+Riyadh,2065,K,Financial and insurance activities,12616.751754431967
+Riyadh,2065,L,Real estate activities,21779.934818909936
+Riyadh,2065,M_N,"Professional, scientific, technical, administration and support",26974.031533882437
+Riyadh,2065,O-Q,"Public administration, defence, education, health and social work",34693.845398164056
+Riyadh,2065,R-U,Other services,16883.770584904454
+Riyadh,2066,A,Agriculture,723.9541519242911
+Riyadh,2066,B-E,Industry,66180.2068351403
+Riyadh,2066,F,Construction,68355.74544252912
+Riyadh,2066,G-I,"Wholesale, retail, transport, accommodation and food",44768.17282658168
+Riyadh,2066,J,Information and communication,19507.190788722914
+Riyadh,2066,K,Financial and insurance activities,12943.75038120576
+Riyadh,2066,L,Real estate activities,22400.535738122293
+Riyadh,2066,M_N,"Professional, scientific, technical, administration and support",27782.181583840516
+Riyadh,2066,O-Q,"Public administration, defence, education, health and social work",35163.02102343058
+Riyadh,2066,R-U,Other services,17126.80673514736
+Riyadh,2067,A,Agriculture,728.408449862199
+Riyadh,2067,B-E,Industry,67571.58608156886
+Riyadh,2067,F,Construction,69806.02060509207
+Riyadh,2067,G-I,"Wholesale, retail, transport, accommodation and food",45541.023150307235
+Riyadh,2067,J,Information and communication,19889.160279819935
+Riyadh,2067,K,Financial and insurance activities,13269.240984963357
+Riyadh,2067,L,Real estate activities,23009.108684330717
+Riyadh,2067,M_N,"Professional, scientific, technical, administration and support",28569.01715535194
+Riyadh,2067,O-Q,"Public administration, defence, education, health and social work",35590.6039238125
+Riyadh,2067,R-U,Other services,17353.496720678115
+Riyadh,2068,A,Agriculture,732.7574869330543
+Riyadh,2068,B-E,Industry,68906.65896457704
+Riyadh,2068,F,Construction,71195.80102196771
+Riyadh,2068,G-I,"Wholesale, retail, transport, accommodation and food",46269.93547904379
+Riyadh,2068,J,Information and communication,20255.11338282865
+Riyadh,2068,K,Financial and insurance activities,13594.907988116538
+Riyadh,2068,L,Real estate activities,23610.249274431502
+Riyadh,2068,M_N,"Professional, scientific, technical, administration and support",29341.299113690493
+Riyadh,2068,O-Q,"Public administration, defence, education, health and social work",35985.26973485641
+Riyadh,2068,R-U,Other services,17567.412516552824
+Riyadh,2069,A,Agriculture,737.0284340048147
+Riyadh,2069,B-E,Industry,70199.61665710421
+Riyadh,2069,F,Construction,72540.15949827775
+Riyadh,2069,G-I,"Wholesale, retail, transport, accommodation and food",46964.890426249396
+Riyadh,2069,J,Information and communication,20609.025711522125
+Riyadh,2069,K,Financial and insurance activities,13922.153794243239
+Riyadh,2069,L,Real estate activities,24207.818464316322
+Riyadh,2069,M_N,"Professional, scientific, technical, administration and support",30104.754052633023
+Riyadh,2069,O-Q,"Public administration, defence, education, health and social work",36354.09371034604
+Riyadh,2069,R-U,Other services,17771.457113630568
+Riyadh,2070,A,Agriculture,741.242690873516
+Riyadh,2070,B-E,Industry,71462.15211866915
+Riyadh,2070,F,Construction,73851.52998910083
+Riyadh,2070,G-I,"Wholesale, retail, transport, accommodation and food",47634.05620602956
+Riyadh,2070,J,Information and communication,20954.158396507566
+Riyadh,2070,K,Financial and insurance activities,14252.146384341171
+Riyadh,2070,L,Real estate activities,24805.040960897295
+Riyadh,2070,M_N,"Professional, scientific, technical, administration and support",30864.188957497987
+Riyadh,2070,O-Q,"Public administration, defence, education, health and social work",36702.796512974775
+Riyadh,2070,R-U,Other services,17967.973059078435

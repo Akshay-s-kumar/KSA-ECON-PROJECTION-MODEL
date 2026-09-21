@@ -14,9 +14,35 @@ EXCEL_PATH = (
 GIS_FOLDER = DATA_PIPELINE_DIR / "raw_gis"
 PROCESSED_DIR = DATA_PIPELINE_DIR / "processed"
 
+NACE_CODES = [
+    "A",
+    "B-E",
+    "F",
+    "G-I",
+    "J",
+    "K",
+    "L",
+    "M_N",
+    "O-Q",
+    "R-U",
+]
+
+SECTOR_NAMES = {
+    "A": "Agriculture",
+    "B-E": "Industry",
+    "F": "Construction",
+    "G-I": "Wholesale, retail, transport, accommodation and food",
+    "J": "Information and communication",
+    "K": "Financial and insurance activities",
+    "L": "Real estate activities",
+    "M_N": "Professional, scientific, technical, administration and support",
+    "O-Q": "Public administration, defence, education, health and social work",
+    "R-U": "Other services",
+}
+
 
 def process_excel():
-    """Extract and restructure Riyadh GVA projection data."""
+    """Extract the hybrid GVA and employment projection tables."""
 
     print("Reading Excel projection model...")
 
@@ -26,117 +52,94 @@ def process_excel():
             "Place the workbook inside data_pipeline/raw_excel/."
         )
 
-    # Read years 2020 to 2035 from the agreed worksheet
-    df_gva = pd.read_excel(
+    worksheet = pd.read_excel(
         EXCEL_PATH,
-        sheet_name="Riyadh_GVA_Emp_NACE Sector",
-        header=4,
-        nrows=16,
+        sheet_name="GVA-EmploymentShares&Projec_HYB",
+        header=None,
         engine="openpyxl",
     )
 
-    # Clean column headings
-    df_gva.columns = [
-        str(column).strip()
-        for column in df_gva.columns
-    ]
-
-    nace_columns = [
-        "A",
-        "B-E",
-        "F",
-        "G-I",
-        "J",
-        "K",
-        "L",
-        "M_N",
-        "O-Q",
-        "R-U",
-    ]
-
-    required_columns = ["Year"] + nace_columns
-    missing_columns = [
-        column
-        for column in required_columns
-        if column not in df_gva.columns
-    ]
-
-    if missing_columns:
-        print("\nColumns found in the worksheet:")
-        print(df_gva.columns.tolist())
-
-        raise ValueError(
-            "\nThe following required columns were not found: "
-            + ", ".join(missing_columns)
+    def extract_table(
+        start_row: int,
+        end_row: int,
+        value_start_column: int,
+        value_end_column: int,
+        value_name: str,
+    ) -> pd.DataFrame:
+        rows = worksheet.iloc[start_row:end_row + 1].copy()
+        years = pd.to_numeric(rows.iloc[:, 1], errors="coerce")
+        values = rows.iloc[:, value_start_column:value_end_column + 1].apply(
+            pd.to_numeric,
+            errors="coerce",
+        )
+        values.columns = NACE_CODES
+        values.insert(0, "Year", years)
+        values = values.dropna(subset=["Year"]).copy()
+        values["Year"] = values["Year"].astype(int)
+        return values.melt(
+            id_vars=["Year"],
+            var_name="NACE_Code",
+            value_name=value_name,
         )
 
-    # Keep only valid year records
-    df_gva["Year"] = pd.to_numeric(
-        df_gva["Year"],
-        errors="coerce",
+    gva_shares = extract_table(19, 66, 2, 11, "GVA_Share")
+    gva_values = extract_table(19, 66, 12, 21, "GVA_Value")
+    employment_values = extract_table(75, 122, 2, 11, "Employment_Value")
+
+    data = gva_values.merge(
+        gva_shares,
+        on=["Year", "NACE_Code"],
+        validate="one_to_one",
+    ).merge(
+        employment_values,
+        on=["Year", "NACE_Code"],
+        validate="one_to_one",
     )
 
-    df_gva = df_gva.dropna(subset=["Year"]).copy()
-    df_gva["Year"] = df_gva["Year"].astype(int)
-
-    # Reshape the table from wide format to long format
-    df_gva_long = pd.melt(
-        df_gva,
-        id_vars=["Year"],
-        value_vars=nace_columns,
-        var_name="NACE_Code",
-        value_name="GVA_Value",
+    data["Employment_Share"] = (
+        data["Employment_Value"]
+        / data.groupby("Year")["Employment_Value"].transform("sum")
     )
-
-    # Ensure GVA is numeric
-    df_gva_long["GVA_Value"] = pd.to_numeric(
-        df_gva_long["GVA_Value"],
-        errors="coerce",
+    data["Productivity"] = (
+        data["GVA_Value"] * 1000 / data["Employment_Value"]
     )
+    data["Region"] = "Riyadh"
+    data["Sector_Name"] = data["NACE_Code"].map(SECTOR_NAMES)
 
-    # Apply the agreed sector mapping
-    sector_mapping = {
-        "A": "Agriculture",
-        "B-E": "Industry",
-        "F": "Industry",
-        "G-I": "Consumer services",
-        "J": (
-            "Transport, storage, information "
-            "& communication services"
-        ),
-        "K": "Financial & business services",
-        "L": "Financial & business services",
-        "M_N": "Financial & business services",
-        "O-Q": "Public services",
-        "R-U": "Consumer services",
-    }
-
-    df_gva_long["Sector_Name"] = (
-        df_gva_long["NACE_Code"].map(sector_mapping)
-    )
-
-    df_gva_long["Region"] = "Riyadh"
-
-    # Arrange output columns
-    df_gva_long = df_gva_long[
+    data = data[
         [
             "Region",
             "Year",
             "NACE_Code",
             "Sector_Name",
             "GVA_Value",
+            "Employment_Value",
+            "Productivity",
+            "GVA_Share",
+            "Employment_Share",
         ]
-    ]
+    ].sort_values(["Year", "NACE_Code"])
 
-    output_path = PROCESSED_DIR / "riyadh_gva_clean.csv"
-    df_gva_long.to_csv(output_path, index=False)
+    if data[["GVA_Value", "Employment_Value"]].isna().any().any():
+        raise ValueError(
+            "The hybrid worksheet contains missing GVA or employment values."
+        )
 
-    print(f"[SUCCESS] GVA data saved to:\n{output_path}")
-    print(f"[INFO] Number of output rows: {len(df_gva_long)}")
+    output_path = PROCESSED_DIR / "riyadh_economic_projection.csv"
+    data.to_csv(output_path, index=False)
+
+    # Keep the V1 output available for existing API consumers.
+    legacy_path = PROCESSED_DIR / "riyadh_gva_clean.csv"
+    data[
+        ["Region", "Year", "NACE_Code", "Sector_Name", "GVA_Value"]
+    ].to_csv(legacy_path, index=False)
+
+    print(f"[SUCCESS] Economic projection data saved to:\n{output_path}")
+    print(f"[INFO] Number of output rows: {len(data)}")
     print(
         f"[INFO] Year range: "
-        f"{df_gva_long['Year'].min()} to "
-        f"{df_gva_long['Year'].max()}"
+        f"{data['Year'].min()} to "
+        f"{data['Year'].max()}"
     )
 
 
@@ -209,7 +212,7 @@ def process_gis():
 
 
 def process_data():
-    """Run the complete V1 processing pipeline."""
+    """Run the complete Version 2 processing pipeline."""
 
     print("=" * 60)
     print("Starting Riyadh Economic Digital Twin data processing")

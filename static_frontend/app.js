@@ -111,6 +111,12 @@ const elements = {
     kpiGva:
         document.getElementById("kpi-gva"),
 
+    kpiMetricLabel:
+        document.getElementById("kpi-metric-label"),
+
+    kpiMetricUnit:
+        document.getElementById("kpi-metric-unit"),
+
     kpiBaseGva:
         document.getElementById("kpi-base-gva"),
 
@@ -134,6 +140,9 @@ const elements = {
             "trend-highlight-value"
         ),
 
+    trendUnitLabel:
+        document.getElementById("trend-unit-label"),
+
     trendChartElement:
         document.getElementById("gva-trend-chart"),
 
@@ -144,6 +153,12 @@ const elements = {
         document.getElementById(
             "sector-distribution-subtitle"
         ),
+
+    sectorChartTitle:
+        document.getElementById("sector-chart-title"),
+
+    sectorValueHeading:
+        document.getElementById("sector-value-heading"),
 
     sectorResultsTableBody:
         document.getElementById(
@@ -172,6 +187,31 @@ async function initializeApplication() {
     initializeCharts();
     initializeMap();
     updateYearDisplay();
+    await loadFilters();
+}
+
+
+async function loadFilters() {
+    const filters = await fetchJson(
+        `${CONFIG.apiBaseUrl}/api/filters`
+    );
+    const years = filters.years || [];
+
+    if (years.length > 0) {
+        const minimumYear = Math.min(...years);
+        const maximumYear = Math.max(...years);
+        elements.yearRange.min = minimumYear;
+        elements.yearRange.max = maximumYear;
+        elements.yearRange.value = Math.min(
+            Math.max(Number(elements.yearRange.value), minimumYear),
+            maximumYear
+        );
+        const minimumLabel = document.getElementById("minimum-year-label");
+        const maximumLabel = document.getElementById("maximum-year-label");
+        if (minimumLabel) minimumLabel.textContent = minimumYear;
+        if (maximumLabel) maximumLabel.textContent = maximumYear;
+        updateYearDisplay();
+    }
 }
 
 
@@ -781,19 +821,22 @@ async function runAnalysis() {
                 `${CONFIG.apiBaseUrl}/api/kpis` +
                 `?year=${selection.year}` +
                 `&region=${encodedRegion}` +
-                `&nace_code=${encodedCode}`
+                `&nace_code=${encodedCode}` +
+                `&metric=${encodeURIComponent(selection.metric)}`
             ),
 
             fetchJson(
                 `${CONFIG.apiBaseUrl}/api/trend` +
                 `?region=${encodedRegion}` +
-                `&nace_code=${encodedCode}`
+                `&nace_code=${encodedCode}` +
+                `&metric=${encodeURIComponent(selection.metric)}`
             ),
 
             fetchJson(
                 `${CONFIG.apiBaseUrl}/api/sectors` +
                 `?year=${selection.year}` +
-                `&region=${encodedRegion}`
+                `&region=${encodedRegion}` +
+                `&metric=${encodeURIComponent(selection.metric)}`
             )
         ];
 
@@ -1048,7 +1091,7 @@ function populateKpiResults(
     selection
 ) {
     const selectedGva =
-        toFiniteNumber(kpiData.gva_value);
+        toFiniteNumber(kpiData.metric_value ?? kpiData.gva_value);
 
     const baseGva =
         toFiniteNumber(kpiData.base_year_gva);
@@ -1069,13 +1112,20 @@ function populateKpiResults(
     elements.kpiGva.textContent =
         formatNumber(selectedGva, 2);
 
+    elements.kpiMetricLabel.textContent =
+        kpiData.metric_name || selection.metricName;
+    elements.kpiMetricUnit.textContent =
+        kpiData.unit || "Selected metric";
+    elements.trendUnitLabel.textContent =
+        kpiData.unit || "Selected metric";
+
     elements.kpiBaseGva.textContent =
         formatNumber(baseGva, 2);
 
     elements.kpiBaseGvaYear.textContent =
         baseYear !== "-"
-            ? `SAR Million / ${baseYear}`
-            : "SAR Million";
+            ? `${kpiData.unit || ""} / ${baseYear}`
+            : (kpiData.unit || "");
 
     elements.kpiSector.textContent =
         kpiData.sector_name ||
@@ -1202,7 +1252,7 @@ function populateTrendChart(
                         `<br>` +
                         `${selection.sectorName}: ` +
                         `${formatNumber(item.value, 2)} ` +
-                        `SAR Mn`
+                        `${trendData.unit || ""}`
                     );
                 }
             },
@@ -1272,7 +1322,7 @@ function populateTrendChart(
             series: [
                 {
                     name:
-                        `${selection.sectorName} GVA`,
+                        `${selection.sectorName} ${selection.metricName}`,
 
                     type: "line",
 
@@ -1520,8 +1570,13 @@ function populateSectorDistribution(
         true
     );
 
+    const unit = sectorData.unit || "selected metric";
     elements.sectorDistributionSubtitle.textContent =
-        `SAR Million / ${selection.year}`;
+        `${unit} / ${selection.year}`;
+    elements.sectorChartTitle.textContent =
+        `Sector Distribution by ${selection.metricName}`;
+    elements.sectorValueHeading.textContent =
+        selection.metricName;
 
     populateSectorTable(
         sectorRecords,
