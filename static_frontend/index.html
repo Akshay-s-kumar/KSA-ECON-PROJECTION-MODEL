@@ -15,19 +15,31 @@
             <div class="panel-heading"><span>VERSION 3</span><h2>Parameter Selection</h2></div>
             <label>Region<select id="region-select"></select></label>
             <label>Sector<select id="sector-select"></select></label>
-            <div class="range-label"><span>GVA percentile</span><output id="gva-value"></output></div>
-            <input id="gva-percentile" type="range" min="5" max="100" step="5" value="50">
-            <div class="range-label"><span>GVA-Employment delta</span><output id="gva-emp-value"></output></div>
-            <input id="gva-emp-percentile" type="range" min="0" max="100" step="5" value="50">
-            <div class="range-label"><span>Employment-Population delta</span><output id="emp-pop-value"></output></div>
-            <input id="emp-pop-percentile" type="range" min="0" max="100" step="5" value="50">
+            <div id="scenario-assumptions">
+                <div class="range-label"><span>GVA percentile</span><output id="gva-value"></output></div>
+                <input id="gva-percentile" type="range" min="5" max="100" step="5" value="50">
+                <div class="range-label"><span>GVA-Employment delta</span><output id="gva-emp-value"></output></div>
+                <input id="gva-emp-percentile" type="range" min="0" max="100" step="5" value="50">
+                <div class="range-label"><span>Employment-Population delta</span><output id="emp-pop-value"></output></div>
+                <input id="emp-pop-percentile" type="range" min="0" max="100" step="5" value="50">
+            </div>
+            <section id="all-sector-assumptions" class="all-sector-assumptions is-hidden" aria-label="Per-sector assumptions">
+                <h3>Sector assumptions</h3>
+                <p>Set the projection assumptions independently for each sector.</p>
+                <div id="all-sector-controls"></div>
+            </section>
             <button id="run-button">Run Projection <span>→</span></button>
-            <p class="control-note">Choose the assumptions for the selected sector. Results are calculated from the workbook-validated V3 scenario database.</p>
+            <p class="control-note" id="control-note">Choose the assumptions for the selected sector. Results are calculated from the workbook-validated V3 scenario database.</p>
         </aside>
 
         <section class="map-stage">
             <div id="map"></div>
             <div class="map-overlay top-left"><h1>KSA Economic Projection Model</h1><p id="map-status">Loading administrative boundaries...</p></div>
+            <div class="map-overlay economy-map-card is-hidden" id="economy-map-card" aria-live="polite">
+                <span class="eyebrow">RIYADH REGION · TOTAL GVA</span>
+                <strong id="map-economy-value">—</strong>
+                <small><span id="map-economy-year"></span> · SAR million</small>
+            </div>
             <div class="map-overlay map-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="reset-map" aria-label="Reset map">⌂</button></div>
             <div class="map-overlay bottom-left"><span class="legend-dot"></span> Selected region <span class="map-coordinate" id="map-coordinate"></span></div>
         </section>
@@ -38,13 +50,20 @@
             <label class="year-control">Projection year <output id="year-value"></output><input id="year-slider" type="range" min="2023" max="2070" value="2023"></label>
             <div class="kpi-grid">
                 <article class="kpi-purple"><span>GVA share</span><strong id="kpi-gva-share">-</strong><small>selected year</small></article>
-                <article class="kpi-green"><span id="label-gva">Sector GVA</span><strong id="kpi-gva">-</strong><small>SAR million</small></article>
+                <article class="kpi-green" id="kpi-card-gva"><span id="label-gva">Sector GVA</span><strong id="kpi-gva">-</strong><small>SAR million</small></article>
                 <article class="kpi-blue"><span id="label-employment">Sector employment</span><strong id="kpi-employment">-</strong><small>total jobs</small></article>
                 <article class="kpi-green"><span id="label-saudi">Sector Saudi jobs</span><strong id="kpi-saudi">-</strong><small>jobs</small></article>
                 <article class="kpi-purple"><span id="label-non-saudi">Sector non-Saudi jobs</span><strong id="kpi-non-saudi">-</strong><small>jobs</small></article>
                 <article class="kpi-orange"><span id="label-income">Sector income</span><strong id="kpi-income">-</strong><small>SAR million</small></article>
             </div>
-            <div class="chart-card"><div class="chart-title"><strong>GVA Share S-curve</strong><span>2023–2070</span></div><div id="gva-chart"></div></div>
+            <section class="sector-breakdown is-hidden" id="sector-breakdown" aria-labelledby="sector-breakdown-title">
+                <div class="sector-breakdown-heading">
+                    <h3 id="sector-breakdown-title">Sector GVA</h3>
+                    <span>SAR million</span>
+                </div>
+                <div id="sector-breakdown-list"></div>
+            </section>
+            <div class="chart-card"><div class="chart-title"><strong id="chart-title">GVA Share S-curve</strong><span id="chart-range">2023–2070</span></div><div id="gva-chart"></div></div>
             <details><summary>Scenario details</summary><dl id="scenario-details"></dl></details>
         </aside>
         <p class="error is-hidden" id="error-message" role="alert"></p>

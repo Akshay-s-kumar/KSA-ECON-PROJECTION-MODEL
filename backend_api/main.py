@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 
 
 # ============================================================
@@ -39,6 +40,18 @@ METRICS = {
 # ============================================================
 
 database_connection: Optional[duckdb.DuckDBPyConnection] = None
+
+
+class SectorAssumptions(BaseModel):
+    sector_code: str
+    gva_percentile: float = Field(ge=0.05, le=1)
+    gva_emp_delta_percentile: float = Field(ge=0, le=1)
+    emp_pop_delta_percentile: float = Field(ge=0, le=1)
+
+
+class EconomyScenarioRequest(BaseModel):
+    region: str = "Riyadh"
+    sectors: list[SectorAssumptions]
 
 
 def get_database() -> duckdb.DuckDBPyConnection:
@@ -321,6 +334,308 @@ def get_v3_filters():
             "maximum": years[1],
             "default": years[0],
         },
+    }
+
+
+@app.get("/api/v3/economy", tags=["Version 3"])
+def get_v3_economy(
+    region: str = Query(default="Riyadh"),
+):
+    """Return annual GVA values by sector and their regional totals."""
+
+    connection = get_database()
+    records = connection.execute(
+        """
+        SELECT
+            Year,
+            NACE_Code,
+            Sector_Name,
+            SUM(GVA_Value) AS sector_gva_sar_million
+        FROM riyadh_gva
+        WHERE LOWER(Region) = LOWER(?)
+        GROUP BY Year, NACE_Code, Sector_Name
+        ORDER BY Year, sector_gva_sar_million DESC, NACE_Code
+        """,
+        [region],
+    ).fetchall()
+
+    if not records:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No economic projection data was found for region '{region}'.",
+        )
+
+    annual_by_year = {}
+    for year, sector_code, sector_name, sector_gva in records:
+        annual = annual_by_year.setdefault(
+            year,
+            {"year": year, "sectors": [], "total_gva_sar_million": 0.0},
+        )
+        value = float(sector_gva)
+        annual["sectors"].append(
+            {
+                "sector_code": sector_code,
+                "sector_name": sector_name,
+                "gva_sar_million": round(value, 2),
+            }
+        )
+        annual["total_gva_sar_million"] += value
+
+    annual_results = []
+    for annual in annual_by_year.values():
+        total_gva = annual["total_gva_sar_million"]
+        annual_results.append(
+            {
+                "year": annual["year"],
+                "sectors_included": len(annual["sectors"]),
+                "total_gva_sar_million": round(total_gva, 2),
+                "sectors": [
+                    {
+                        **sector,
+                        "share_percent": (
+                            round(
+                                sector["gva_sar_million"] / total_gva * 100,
+                                2,
+                            )
+                            if total_gva
+                            else 0
+                        ),
+                    }
+                    for sector in annual["sectors"]
+                ],
+            }
+        )
+
+    return {
+        "region": region,
+        "metric": "GVA",
+        "unit": "SAR million",
+        "aggregation": "Sum of GVA across all available sectors.",
+        "annual_results": annual_results,
+    }
+
+
+@app.post("/api/v3/economy/scenario", tags=["Version 3"])
+def get_v3_economy_scenario(payload: EconomyScenarioRequest):
+    """Combine the selected precomputed assumptions for every sector."""
+
+    connection = get_database()
+    if not v3_available(connection):
+        raise HTTPException(
+            status_code=503,
+            detail="Version 3 scenario database has not been generated.",
+        )
+    available_sectors = connection.execute(
+        """
+        SELECT sector_code
+        FROM v3.scenario_master
+        WHERE LOWER(region) = LOWER(?)
+        GROUP BY sector_code
+        ORDER BY sector_code
+        """,
+        [payload.region],
+    ).fetchall()
+    if not available_sectors:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No Version 3 scenarios were found for region '{payload.region}'.",
+        )
+    available_codes = {row[0] for row in available_sectors}
+    requested_codes = [sector.sector_code for sector in payload.sectors]
+
+    if len(requested_codes) != len(set(requested_codes)):
+        raise HTTPException(
+            status_code=422,
+            detail="Each sector must be selected only once.",
+        )
+    if set(requested_codes) != available_codes:
+        raise HTTPException(
+            status_code=422,
+            detail="Provide assumptions for every available sector exactly once.",
+        )
+
+    selected_scenarios = []
+    for assumptions in payload.sectors:
+        if (
+            round(assumptions.gva_percentile, 2) not in
+            tuple(index / 20 for index in range(1, 21))
+            or round(assumptions.gva_emp_delta_percentile, 2) not in
+            tuple(index / 20 for index in range(21))
+            or round(assumptions.emp_pop_delta_percentile, 2) not in
+            tuple(index / 20 for index in range(21))
+        ):
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "Assumptions must use the available 5% percentile "
+                    "increments."
+                ),
+            )
+
+        scenario = connection.execute(
+            """
+            SELECT scenario_id, sector_code
+            FROM v3.scenario_master
+            WHERE LOWER(region) = LOWER(?)
+              AND sector_code = ?
+              AND gva_percentile = ?
+              AND gva_emp_delta_percentile = ?
+              AND emp_pop_delta_percentile = ?
+            """,
+            [
+                payload.region,
+                assumptions.sector_code,
+                round(assumptions.gva_percentile, 2),
+                round(assumptions.gva_emp_delta_percentile, 2),
+                round(assumptions.emp_pop_delta_percentile, 2),
+            ],
+        ).fetchone()
+        if scenario is None:
+            raise HTTPException(
+                status_code=404,
+                detail=(
+                    "A matching precomputed scenario was not found for "
+                    f"sector '{assumptions.sector_code}'."
+                ),
+            )
+        selected_scenarios.append(scenario)
+
+    placeholders = ", ".join("?" for _ in selected_scenarios)
+    records = connection.execute(
+        f"""
+        SELECT
+            master.sector_code,
+            master.sector_name,
+            annual.year,
+            annual.gva_share_s_curve,
+            annual.sector_gva_sar_million,
+            annual.sector_employment_saudi,
+            annual.sector_employment_non_saudi,
+            annual.sector_employment_total,
+            annual.sector_population,
+            annual.sector_income,
+            annual.sector_consumption
+        FROM v3.scenario_master AS master
+        JOIN v3.scenario_annual_results AS annual
+            ON annual.scenario_id = master.scenario_id
+        WHERE master.scenario_id IN ({placeholders})
+        ORDER BY annual.year, master.sector_code
+        """,
+        [scenario[0] for scenario in selected_scenarios],
+    ).fetchall()
+
+    annual_by_year = {}
+    for row in records:
+        (
+            sector_code,
+            sector_name,
+            year,
+            gva_share,
+            sector_gva,
+            employment_saudi,
+            employment_non_saudi,
+            employment_total,
+            population,
+            income,
+            consumption,
+        ) = row
+        annual = annual_by_year.setdefault(
+            year,
+            {
+                "year": year,
+                "sectors": [],
+                "total_gva_sar_million": 0.0,
+                "employment_saudi": 0.0,
+                "employment_non_saudi": 0.0,
+                "employment_total": 0.0,
+                "population": 0.0,
+                "income": 0.0,
+                "consumption": 0.0,
+            },
+        )
+        sector_values = {
+            "sector_code": sector_code,
+            "sector_name": sector_name,
+            "gva_share_s_curve": float(gva_share),
+            "gva_sar_million": float(sector_gva),
+            "employment_saudi": float(employment_saudi),
+            "employment_non_saudi": float(employment_non_saudi),
+            "employment_total": float(employment_total),
+            "population": float(population),
+            "income": float(income),
+            "consumption": float(consumption),
+        }
+        annual["sectors"].append(sector_values)
+        annual["total_gva_sar_million"] += float(sector_gva)
+        for metric in (
+            "employment_saudi",
+            "employment_non_saudi",
+            "employment_total",
+            "population",
+            "income",
+            "consumption",
+        ):
+            annual[metric] += sector_values[metric]
+
+    annual_results = []
+    for annual in annual_by_year.values():
+        total_gva = annual["total_gva_sar_million"]
+        annual_results.append(
+            {
+                "year": annual["year"],
+                "sectors_included": len(annual["sectors"]),
+                "total_gva_sar_million": round(total_gva, 2),
+                "employment_saudi": round(annual["employment_saudi"], 2),
+                "employment_non_saudi": round(
+                    annual["employment_non_saudi"], 2
+                ),
+                "employment_total": round(annual["employment_total"], 2),
+                "population": round(annual["population"], 2),
+                "income": round(annual["income"], 2),
+                "consumption": round(annual["consumption"], 2),
+                "sectors": [
+                    {
+                        "sector_code": sector["sector_code"],
+                        "sector_name": sector["sector_name"],
+                        "gva_share_s_curve": sector["gva_share_s_curve"],
+                        "gva_sar_million": round(
+                            sector["gva_sar_million"], 2
+                        ),
+                        "share_percent": (
+                            round(
+                                sector["gva_sar_million"] / total_gva * 100,
+                                2,
+                            )
+                            if total_gva
+                            else 0
+                        ),
+                        "employment_saudi": round(
+                            sector["employment_saudi"], 2
+                        ),
+                        "employment_non_saudi": round(
+                            sector["employment_non_saudi"], 2
+                        ),
+                        "employment_total": round(
+                            sector["employment_total"], 2
+                        ),
+                        "population": round(sector["population"], 2),
+                        "income": round(sector["income"], 2),
+                        "consumption": round(sector["consumption"], 2),
+                    }
+                    for sector in annual["sectors"]
+                ],
+            }
+        )
+
+    return {
+        "region": payload.region,
+        "metric": "GVA",
+        "unit": "SAR million",
+        "aggregation": (
+            "Sum of sector outputs calculated from each sector's "
+            "selected assumptions."
+        ),
+        "annual_results": annual_results,
     }
 
 

@@ -31,3 +31,43 @@
 .kpi-grid article:after{display:none}
 .kpi-grid article strong{text-shadow:0 0 6px var(--kpi-glow)}
 .background{background:radial-gradient(ellipse at 12% 8%,rgba(255,111,57,.34),transparent 19%),radial-gradient(ellipse at 31% 82%,rgba(91,71,225,.3),transparent 25%),radial-gradient(ellipse at 58% -8%,rgba(255,72,44,.3),transparent 24%),radial-gradient(ellipse at 91% 18%,rgba(67,84,226,.34),transparent 24%),radial-gradient(ellipse at 88% 88%,rgba(255,99,45,.28),transparent 23%),#030816}
+
+.economy-map-card{
+  left:18px;
+  bottom:62px;
+  display:grid;
+  gap:7px;
+  min-width:205px;
+  padding:14px 16px;
+  border:1px solid rgba(255,154,105,.5);
+  border-radius:12px;
+  background:rgba(5,10,20,.88);
+  box-shadow:0 8px 30px rgba(0,0,0,.38),0 0 22px rgba(255,116,56,.2);
+  backdrop-filter:blur(14px);
+}
+.economy-map-card .eyebrow{font-size:9px}
+.economy-map-card strong{font-size:23px;color:#55e890}
+.economy-map-card small{color:var(--muted);font-size:10px}
+#results-panel.economy-overview .kpi-grid article:not(#kpi-card-gva){display:none}
+.parameter-panel #scenario-assumptions[hidden]{display:none}
+#results-panel.economy-overview .kpi-grid,
+#results-panel.economy-overview .chart-card,
+#results-panel.economy-overview details{display:none}
+.sector-breakdown{margin-top:18px}
+.sector-breakdown-heading,.sector-breakdown-details{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.sector-breakdown-heading{margin-bottom:12px}
+.sector-breakdown-heading h3{margin:0;font-size:14px}
+.sector-breakdown-heading>span,.sector-breakdown-item small{color:var(--muted);font-size:10px}
+.sector-breakdown-item{padding:11px 0;border-top:1px solid var(--border)}
+.sector-breakdown-details strong{font-size:11px;font-weight:600}
+.sector-breakdown-details span{flex:none;color:#55e890;font-size:12px;font-weight:700}
+.sector-breakdown-track{height:4px;margin:8px 0 5px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.08)}
+.sector-breakdown-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--orange),#bd8cff)}
+.all-sector-assumptions{margin-top:18px}
+.all-sector-assumptions>h3{margin:0;font-size:14px}
+.all-sector-assumptions>p{margin:6px 0 12px;color:var(--muted);font-size:10px;line-height:1.5}
+.sector-assumption-card{margin:10px 0;padding:12px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.035)}
+.sector-assumption-card h4{margin:0 0 10px;font-size:11px;line-height:1.4;color:#f8f9fc}
+.sector-assumption-card .range-label{margin-top:10px;font-size:9px}
+.sector-assumption-card .range-label output{font-size:9px}
+.sector-assumption-card input[type=range]{margin:5px 0 0}
