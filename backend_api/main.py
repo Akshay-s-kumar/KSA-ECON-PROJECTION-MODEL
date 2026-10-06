@@ -23,6 +23,7 @@ FRONTEND_DIR = PROJECT_DIR / "static_frontend"
 GVA_CSV_PATH = PROCESSED_DIR / "riyadh_gva_clean.csv"
 ANALYTICS_CSV_PATH = PROCESSED_DIR / "riyadh_economic_projection.csv"
 BOUNDARIES_PATH = PROCESSED_DIR / "saudi_boundaries.geojson"
+V3_DATABASE_PATH = PROCESSED_DIR / "v3_scenarios.duckdb"
 
 METRICS = {
     "gva": ("GVA_Value", "Gross Value Added", "SAR million"),
@@ -67,6 +68,10 @@ def initialize_database() -> duckdb.DuckDBPyConnection:
 
     connection = duckdb.connect(database=":memory:")
 
+    if V3_DATABASE_PATH.exists():
+        v3_path_sql = V3_DATABASE_PATH.as_posix().replace("'", "''")
+        connection.execute(f"ATTACH '{v3_path_sql}' AS v3 (READ_ONLY)")
+
     csv_path_sql = ANALYTICS_CSV_PATH.as_posix().replace("'", "''")
 
     connection.execute(
@@ -110,6 +115,10 @@ def initialize_database() -> duckdb.DuckDBPyConnection:
         )
 
     return connection
+
+
+def v3_available(connection: duckdb.DuckDBPyConnection) -> bool:
+    return V3_DATABASE_PATH.exists()
 
 
 # ============================================================
@@ -264,6 +273,150 @@ def health_check():
         "analytics_csv_available": ANALYTICS_CSV_PATH.exists(),
         "boundaries_available": BOUNDARIES_PATH.exists(),
         "gva_record_count": record_count,
+        "v3_database_available": v3_available(connection),
+    }
+
+
+@app.get("/api/v3/filters", tags=["Version 3"])
+def get_v3_filters():
+    """Return the workbook-approved Version 3 selectors and year range."""
+
+    connection = get_database()
+    if not v3_available(connection):
+        raise HTTPException(
+            status_code=503,
+            detail="Version 3 scenario database has not been generated.",
+        )
+    sectors = connection.execute(
+        """
+        SELECT sector_code, sector_name, workbook_column
+        FROM v3.scenario_master
+        GROUP BY sector_code, sector_name, workbook_column
+        ORDER BY sector_code
+        """
+    ).fetchall()
+    years = connection.execute(
+        """
+        SELECT MIN(year), MAX(year)
+        FROM v3.scenario_annual_results
+        """
+    ).fetchone()
+    return {
+        "regions": [{"code": "Riyadh", "name": "Riyadh Region"}],
+        "sectors": [
+            {
+                "code": row[0],
+                "name": row[1],
+                "workbook_column": row[2],
+            }
+            for row in sectors
+        ],
+        "percentiles": {
+            "gva": [index / 20 for index in range(1, 21)],
+            "gva_emp_delta": [index / 20 for index in range(21)],
+            "emp_pop_delta": [index / 20 for index in range(21)],
+        },
+        "years": {
+            "minimum": years[0],
+            "maximum": years[1],
+            "default": years[0],
+        },
+    }
+
+
+@app.get("/api/v3/scenario", tags=["Version 3"])
+def get_v3_scenario(
+    sector_code: str = Query(...),
+    gva_percentile: float = Query(..., ge=0, le=1),
+    gva_emp_delta_percentile: float = Query(..., ge=0, le=1),
+    emp_pop_delta_percentile: float = Query(..., ge=0, le=1),
+    region: str = Query(default="Riyadh"),
+):
+    """Return one precomputed Version 3 scenario and all annual records."""
+
+    connection = get_database()
+    if not v3_available(connection):
+        raise HTTPException(
+            status_code=503,
+            detail="Version 3 scenario database has not been generated.",
+        )
+    scenario = connection.execute(
+        """
+        SELECT
+            scenario_id, workbook_version, region, sector_code, sector_name,
+            workbook_column, gva_percentile, gva_share_result,
+            gva_emp_delta_percentile, gva_emp_delta_result,
+            emp_pop_delta_percentile, emp_pop_delta_result
+        FROM v3.scenario_master
+        WHERE LOWER(region) = LOWER(?)
+          AND sector_code = ?
+          AND gva_percentile = ?
+          AND gva_emp_delta_percentile = ?
+          AND emp_pop_delta_percentile = ?
+        """,
+        [
+            region,
+            sector_code,
+            round(gva_percentile, 2),
+            round(gva_emp_delta_percentile, 2),
+            round(emp_pop_delta_percentile, 2),
+        ],
+    ).fetchone()
+    if scenario is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No precomputed Version 3 scenario matches the selection.",
+        )
+    annual = connection.execute(
+        """
+        SELECT
+            year, gva_share_s_curve, gva_sar_million, employment_saudi,
+            employment_non_saudi, employment_total, population, income,
+            consumption, sector_gva_sar_million, sector_employment_saudi,
+            sector_employment_non_saudi, sector_employment_total,
+            sector_population, sector_income, sector_consumption
+        FROM v3.scenario_annual_results
+        WHERE scenario_id = ?
+        ORDER BY year
+        """,
+        [scenario[0]],
+    ).fetchall()
+    return {
+        "scenario": {
+            "scenario_id": scenario[0],
+            "workbook_version": scenario[1],
+            "region": scenario[2],
+            "sector_code": scenario[3],
+            "sector_name": scenario[4],
+            "workbook_column": scenario[5],
+            "gva_percentile": scenario[6],
+            "gva_share_result": scenario[7],
+            "gva_emp_delta_percentile": scenario[8],
+            "gva_emp_delta_result": scenario[9],
+            "emp_pop_delta_percentile": scenario[10],
+            "emp_pop_delta_result": scenario[11],
+        },
+        "annual_results": [
+            {
+                "year": row[0],
+                "gva_share_s_curve": row[1],
+                "gva_sar_million": row[2],
+                "employment_saudi": row[3],
+                "employment_non_saudi": row[4],
+                "employment_total": row[5],
+                "population": row[6],
+                "income": row[7],
+                "consumption": row[8],
+                "sector_gva_sar_million": row[9],
+                "sector_employment_saudi": row[10],
+                "sector_employment_non_saudi": row[11],
+                "sector_employment_total": row[12],
+                "sector_population": row[13],
+                "sector_income": row[14],
+                "sector_consumption": row[15],
+            }
+            for row in annual
+        ],
     }
 
 
