@@ -58,11 +58,7 @@
 .sector-breakdown-heading{margin-bottom:12px}
 .sector-breakdown-heading h3{margin:0;font-size:14px}
 .sector-breakdown-heading>span,.sector-breakdown-item small{color:var(--muted);font-size:10px}
-.sector-breakdown-item{padding:11px 0;border-top:1px solid var(--border)}
-.sector-breakdown-details strong{font-size:11px;font-weight:600}
 .sector-breakdown-details span{flex:none;color:#55e890;font-size:12px;font-weight:700}
-.sector-breakdown-track{height:4px;margin:8px 0 5px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.08)}
-.sector-breakdown-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--orange),#bd8cff)}
 .all-sector-assumptions{margin-top:18px}
 .all-sector-assumptions>h3{margin:0;font-size:14px}
 .all-sector-assumptions>p{margin:6px 0 12px;color:var(--muted);font-size:10px;line-height:1.5}
@@ -71,3 +67,32 @@
 .sector-assumption-card .range-label{margin-top:10px;font-size:9px}
 .sector-assumption-card .range-label output{font-size:9px}
 .sector-assumption-card input[type=range]{margin:5px 0 0}
+/* Map totals card */
+.economy-map-card{gap:10px;min-width:230px}
+.map-metric{display:grid;gap:2px}
+.map-metric small{color:var(--muted);font-size:10px}
+.economy-map-card .map-metric strong{font-size:19px}
+#map-total-population{color:#67b7ff}
+#map-total-employment{color:#bd8cff}
+#map-total-gva{color:#55e890}
+
+/* Whole economy population */
+.economy-population{display:grid;gap:6px;padding:16px;margin-bottom:8px;border:1px solid rgba(255,154,105,.45);border-radius:12px;background:rgba(255,255,255,.04)}
+.economy-population small{color:var(--muted);font-size:10px}
+.economy-population strong{font-size:26px;color:#67b7ff;text-shadow:0 0 6px rgba(59,130,246,.38)}
+
+/* Sector blocks with thin dividers */
+.sector-block{padding:16px 0;border-top:1px solid var(--border)}
+.sector-block:first-child{border-top:0}
+.sector-block h4{margin:0 0 10px;font-size:12px;font-weight:700;line-height:1.4}
+.sector-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.sector-metrics div{padding:10px;border:1px solid var(--border);border-radius:9px;background:rgba(255,255,255,.035)}
+.sector-metrics span,.sector-metrics small{display:block;color:var(--muted);font-size:9px}
+.sector-metrics strong{display:block;font-size:15px;margin:6px 0 2px}
+.sector-metrics [data-field="employment_total"]{color:#67b7ff}
+.sector-metrics [data-field="employment_saudi"]{color:#55e890}
+.sector-metrics [data-field="employment_non_saudi"]{color:#bd8cff}
+.sector-metrics [data-field="gva_sar_million"]{color:#ff9b68}
+.sector-chart-title{display:flex;justify-content:space-between;font-size:10px;margin:12px 0 4px}
+.sector-chart-title span{color:var(--muted)}
+.sector-chart{height:160px}

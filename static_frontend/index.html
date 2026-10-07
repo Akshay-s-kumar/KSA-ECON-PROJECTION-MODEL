@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>KSA Economic Projection Model</title>
     <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20261006">
 </head>
 <body>
     <div class="background" aria-hidden="true"></div>
@@ -36,9 +36,10 @@
             <div id="map"></div>
             <div class="map-overlay top-left"><h1>KSA Economic Projection Model</h1><p id="map-status">Loading administrative boundaries...</p></div>
             <div class="map-overlay economy-map-card is-hidden" id="economy-map-card" aria-live="polite">
-                <span class="eyebrow">RIYADH REGION · TOTAL GVA</span>
-                <strong id="map-economy-value">—</strong>
-                <small><span id="map-economy-year"></span> · SAR million</small>
+                <span class="eyebrow">RIYADH - East Grant Region · <span id="map-economy-year"></span></span>
+                <div class="map-metric"><small>Total Population</small><strong id="map-total-population">—</strong></div>
+                <div class="map-metric"><small>Total Employment</small><strong id="map-total-employment">—</strong></div>
+                <div class="map-metric"><small>Total GVA · SAR million</small><strong id="map-total-gva">—</strong></div>
             </div>
             <div class="map-overlay map-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="reset-map" aria-label="Reset map">⌂</button></div>
             <div class="map-overlay bottom-left"><span class="legend-dot"></span> Selected region <span class="map-coordinate" id="map-coordinate"></span></div>
@@ -56,11 +57,12 @@
                 <article class="kpi-purple"><span id="label-non-saudi">Sector non-Saudi jobs</span><strong id="kpi-non-saudi">-</strong><small>jobs</small></article>
                 <article class="kpi-orange"><span id="label-income">Sector income</span><strong id="kpi-income">-</strong><small>SAR million</small></article>
             </div>
-            <section class="sector-breakdown is-hidden" id="sector-breakdown" aria-labelledby="sector-breakdown-title">
-                <div class="sector-breakdown-heading">
-                    <h3 id="sector-breakdown-title">Sector GVA</h3>
-                    <span>SAR million</span>
-                </div>
+            <section class="sector-breakdown is-hidden" id="sector-breakdown" aria-label="Whole economy and sector results">
+                <article class="economy-population">
+                    <span class="eyebrow">WHOLE ECONOMY</span>
+                    <small>Population</small>
+                    <strong id="economy-population">—</strong>
+                </article>
                 <div id="sector-breakdown-list"></div>
             </section>
             <div class="chart-card"><div class="chart-title"><strong id="chart-title">GVA Share S-curve</strong><span id="chart-range">2023–2070</span></div><div id="gva-chart"></div></div>
@@ -70,6 +72,6 @@
     </main>
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=20261006"></script>
 </body>
 </html>
