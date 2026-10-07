@@ -1,5 +1,10 @@
 "use strict";
 
+// ============================================================
+// KSA Economic Projection Model - Version 4 frontend
+// V3 behaviour + shared comparator population band (4 inputs)
+// ============================================================
+
 const state = {
     filters: null,
     scenario: null,
@@ -7,11 +12,15 @@ const state = {
     map: null,
     boundaries: null,
     chart: null,
-    sectorCharts: {}
+    allChart: null
 };
 
 const $ = (id) => document.getElementById(id);
 const initialView = { center: [45.1, 24.3], zoom: 4.55 };
+const BAND_KEYS = ["nuts3_min", "nuts3_max", "nuts2_min", "nuts2_max"];
+const LOW_COMPARATOR_COUNT = 10;
+const SECTOR_COLORS = ["#ff7438", "#bd8cff", "#55e890", "#67b7ff", "#ffc35a",
+                       "#ff87c8", "#55e5f5", "#c4f25a", "#ff6b6b", "#e2e8f0"];
 let assumptionUpdateTimeout;
 let scenarioRequestVersion = 0;
 
@@ -22,10 +31,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     bindControls();
     initializeMap();
     try {
-        state.filters = await request("/api/v3/filters");
+        state.filters = await request("/api/v4/filters");
         populateFilters(state.filters);
         $("map-status").textContent = "Choose a sector projection or view all-sector GVA";
         await loadBoundaries();
+        runScenario();
     } catch (error) {
         showError(error.message);
         $("map-status").textContent = "Unable to load model data";
@@ -51,10 +61,22 @@ function bindControls() {
         scheduleScenarioUpdate();
     });
 
+    // Population band: "change" fires on Enter or when leaving the box, not on every keystroke.
+    document.querySelectorAll(".band-input").forEach((input) => {
+        input.addEventListener("change", () => {
+            if (readBand()) runScenario();
+        });
+        input.addEventListener("input", () => input.classList.remove("is-invalid"));
+    });
+    $("band-reset").addEventListener("click", () => {
+        setBandInputs(state.filters.default_band);
+        if (readBand()) runScenario();
+    });
+
     $("run-button").addEventListener("click", runScenario);
     $("sector-select").addEventListener("change", () => {
         updateSectorControl();
-        if ($("sector-select").value === "ALL") runScenario();
+        runScenario();
     });
     $("close-results").addEventListener("click", closeResults);
     $("year-slider").addEventListener("input", updateYear);
@@ -62,6 +84,62 @@ function bindControls() {
     $("zoom-out").addEventListener("click", () => state.map.zoomOut());
     $("reset-map").addEventListener("click", () => state.map.flyTo(initialView));
     window.addEventListener("resize", resizeAllCharts);
+}
+
+// ============================================================
+// POPULATION BAND
+// ============================================================
+function bandInputId(key) {
+    return `band-${key.replace("_", "-")}`;           // nuts3_min -> band-nuts3-min
+}
+
+function setBandInputs(band) {
+    BAND_KEYS.forEach((key) => $(bandInputId(key)).value = band[key]);
+}
+
+function readBand() {
+    const band = {};
+    const invalid = new Set();
+
+    BAND_KEYS.forEach((key) => {
+        const raw = $(bandInputId(key)).value.trim();
+        const value = Number(raw);
+        if (raw === "" || !Number.isFinite(value) || value < 0) invalid.add(key);
+        band[key] = value;
+    });
+    if (band.nuts3_min > band.nuts3_max) { invalid.add("nuts3_min"); invalid.add("nuts3_max"); }
+    if (band.nuts2_min > band.nuts2_max) { invalid.add("nuts2_min"); invalid.add("nuts2_max"); }
+
+    document.querySelectorAll(".band-input").forEach((input) =>
+        input.classList.toggle("is-invalid", invalid.has(input.dataset.key))
+    );
+
+    if (invalid.size) {
+        setBandStatus("Check the highlighted figures. Minimum must not be higher than maximum.", "error");
+        return null;
+    }
+    return band;
+}
+
+function renderComparators(counts) {
+    if (!counts) return;
+    const lowest = Math.min(counts.gva, counts.gva_emp, counts.emp_pop);
+    const text = `GVA ${counts.gva} · GVA–Emp ${counts.gva_emp} · Emp–Pop ${counts.emp_pop} regions pass`;
+    if (lowest === 0) setBandStatus(`${text}. Widen the range.`, "error");
+    else if (lowest < LOW_COMPARATOR_COUNT) setBandStatus(`${text}. Few regions: percentiles will barely change.`, "warning");
+    else setBandStatus(`✓ ${text}`, "ok");
+}
+
+function setBandStatus(message, level) {
+    const status = $("band-status");
+    status.textContent = message;
+    status.className = `band-status is-${level}`;
+}
+
+function formatBand(band) {
+    if (!band) return "—";
+    return `NUTS3 ${formatNumber(band.nuts3_min)}–${formatNumber(band.nuts3_max)} · ` +
+           `NUTS2 ${formatNumber(band.nuts2_min)}–${formatNumber(band.nuts2_max)}`;
 }
 
 // ============================================================
@@ -100,8 +178,6 @@ async function loadBoundaries() {
     const response = await fetch("/api/boundaries");
     if (!response.ok) throw new Error("Administrative boundary data is unavailable.");
     state.boundaries = await response.json();
-
-    // Add layers whether or not the map has already finished loading.
     if (state.map.loaded()) addBoundaryLayers();
     else state.map.once("load", addBoundaryLayers);
 }
@@ -129,7 +205,7 @@ function addBoundaryLayers() {
     state.map.on("mouseenter", "boundary-fill", () => state.map.getCanvas().style.cursor = "pointer");
     state.map.on("mouseleave", "boundary-fill", () => state.map.getCanvas().style.cursor = "");
 
-    if ($("sector-select").value === "ALL" || $("app-shell").classList.contains("results-open")) {
+    if ($("app-shell").classList.contains("results-open")) {
         highlightRiyadh();
         zoomToRiyadh();
     }
@@ -143,9 +219,7 @@ function highlightRiyadh() {
 }
 
 function zoomToRiyadh() {
-    const feature = state.boundaries?.features?.find(
-        (item) => item.properties?.NAME_1 === "Ar Riyad"
-    );
+    const feature = state.boundaries?.features?.find((item) => item.properties?.NAME_1 === "Ar Riyad");
     if (feature) focusFeature(feature);
 }
 
@@ -172,6 +246,7 @@ function populateFilters(filters) {
         filters.sectors.map((item) => `<option value="${item.code}">${item.name}</option>`).join("");
     $("sector-select").value = filters.sectors[0]?.code ?? "ALL";
     buildSectorAssumptions(filters.sectors);
+    setBandInputs(filters.default_band);
     $("year-slider").min = filters.years.minimum;
     $("year-slider").max = filters.years.maximum;
     $("year-slider").value = filters.years.default;
@@ -186,12 +261,10 @@ function updateSectorControl() {
     const isEconomyOverview = $("sector-select").value === "ALL";
     $("scenario-assumptions").hidden = isEconomyOverview;
     $("all-sector-assumptions").classList.toggle("is-hidden", !isEconomyOverview);
-    $("run-button").innerHTML = isEconomyOverview
-        ? "Update All-sector Projection <span>→</span>"
-        : "Run Projection <span>→</span>";
+    $("run-button").innerHTML = "Refresh Projection <span>→</span>";
     $("control-note").textContent = isEconomyOverview
-        ? "Set assumptions for each sector below. Results and the Riyadh map update automatically."
-        : "Results update automatically when you adjust these assumptions. You can also use Run Projection to refresh.";
+        ? "Set assumptions for each sector below. Results update automatically."
+        : "Results update automatically when you move a slider or change a population figure.";
     if (isEconomyOverview) $("map-status").textContent = "Loading all-sector projections for Riyadh Region...";
 }
 
@@ -244,13 +317,15 @@ function buildSectorAssumptions(sectors) {
 // ============================================================
 function scheduleScenarioUpdate() {
     scenarioRequestVersion += 1;
-    $("run-button").disabled = false;
     window.clearTimeout(assumptionUpdateTimeout);
     assumptionUpdateTimeout = window.setTimeout(runScenario, 250);
 }
 
 async function runScenario() {
     window.clearTimeout(assumptionUpdateTimeout);
+    const band = readBand();
+    if (!band) return;                                  // keep previous results on screen
+
     const requestVersion = ++scenarioRequestVersion;
     $("run-button").disabled = true;
     hideError();
@@ -258,52 +333,53 @@ async function runScenario() {
     try {
         if ($("sector-select").value === "ALL") {
             const sectors = state.filters.sectors.map((sector) => {
-                const assumptions = {
-                    sector_code: sector.code,
-                    gva_percentile: 0,
-                    gva_emp_delta_percentile: 0,
-                    emp_pop_delta_percentile: 0
-                };
+                const assumptions = { sector_code: sector.code };
                 $("all-sector-controls")
                     .querySelectorAll(`input[data-sector-code="${sector.code}"]`)
-                    .forEach((input) => {
-                        assumptions[input.dataset.assumption] = Number(input.value) / 100;
-                    });
+                    .forEach((input) => assumptions[input.dataset.assumption] = Number(input.value) / 100);
                 return assumptions;
             });
 
-            const economy = await request("/api/v3/economy/scenario", {
+            const economy = await request("/api/v4/economy/scenario", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ region: $("region-select").value, sectors })
+                body: JSON.stringify({ region: $("region-select").value, band, sectors })
             });
             if (requestVersion !== scenarioRequestVersion) return;
 
             state.economy = economy;
             state.scenario = null;
+            renderComparators(economy.comparators);
             $("economy-map-card").classList.remove("is-hidden");
             $("results-panel").classList.add("economy-overview");
             displayResults(renderEconomyOverview);
             return;
         }
 
-        const params = new URLSearchParams({
-            sector_code: $("sector-select").value,
-            region: "Riyadh",
-            gva_percentile: (Number($("gva-percentile").value) / 100).toFixed(2),
-            gva_emp_delta_percentile: (Number($("gva-emp-percentile").value) / 100).toFixed(2),
-            emp_pop_delta_percentile: (Number($("emp-pop-percentile").value) / 100).toFixed(2)
+        const scenario = await request("/api/v4/scenario", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                sector_code: $("sector-select").value,
+                region: "Riyadh",
+                band,
+                gva_percentile: Number($("gva-percentile").value) / 100,
+                gva_emp_delta_percentile: Number($("gva-emp-percentile").value) / 100,
+                emp_pop_delta_percentile: Number($("emp-pop-percentile").value) / 100
+            })
         });
-        const scenario = await request(`/api/v3/scenario?${params}`);
         if (requestVersion !== scenarioRequestVersion) return;
 
         state.economy = null;
         state.scenario = scenario;
+        renderComparators(scenario.comparators);
         $("economy-map-card").classList.add("is-hidden");
         $("results-panel").classList.remove("economy-overview");
         displayResults(renderScenario);
     } catch (error) {
-        if (requestVersion === scenarioRequestVersion) showError(error.message);
+        if (requestVersion !== scenarioRequestVersion) return;
+        if (error.status === 422) setBandStatus(error.message, "error");   // band problem: keep old results
+        else showError(error.message);
     } finally {
         if (requestVersion === scenarioRequestVersion) $("run-button").disabled = false;
     }
@@ -347,8 +423,7 @@ function closeResults() {
 // SINGLE-SECTOR VIEW
 // ============================================================
 function renderScenario() {
-    disposeSectorCharts();
-    const { scenario, annual_results: annual } = state.scenario;
+    const { scenario, annual_results: annual, band } = state.scenario;
     const selectedYear = Number($("year-slider").value);
 
     $("results-panel").classList.remove("economy-overview");
@@ -368,13 +443,12 @@ function renderScenario() {
 
     $("year-slider").min = annual[0].year;
     $("year-slider").max = annual[annual.length - 1].year;
-    $("year-slider").value = annual.some((row) => row.year === selectedYear)
-        ? selectedYear
-        : annual[0].year;
+    $("year-slider").value = annual.some((row) => row.year === selectedYear) ? selectedYear : annual[0].year;
 
     $("scenario-details").innerHTML = [
         ["Scenario ID", scenario.scenario_id],
         ["Workbook", scenario.workbook_version],
+        ["Comparator band", formatBand(band)],
         ["GVA result", formatPercent(scenario.gva_share_result)],
         ["GVA-Employment delta", formatPercent(scenario.gva_emp_delta_result)],
         ["Employment-Population delta", formatPercent(scenario.emp_pop_delta_result)]
@@ -408,19 +482,15 @@ function renderEconomyOverview() {
 
     $("year-slider").min = annual[0].year;
     $("year-slider").max = annual[annual.length - 1].year;
-    $("year-slider").value = annual.some((row) => row.year === selectedYear)
-        ? selectedYear
-        : annual[0].year;
+    $("year-slider").value = annual.some((row) => row.year === selectedYear) ? selectedYear : annual[0].year;
 
     buildSectorBlocks();
     updateYear();
 }
 
 function buildSectorBlocks() {
-    disposeSectorCharts();
     const annual = state.economy.annual_results;
     const years = annual.map((row) => row.year);
-    const selectedYear = Number($("year-slider").value);
     const container = $("sector-breakdown-list");
 
     container.replaceChildren(...annual[0].sectors.map((sector) => {
@@ -434,24 +504,62 @@ function buildSectorBlocks() {
                 <div><span>Saudi jobs</span><strong data-field="employment_saudi">—</strong><small>jobs</small></div>
                 <div><span>Non-Saudi jobs</span><strong data-field="employment_non_saudi">—</strong><small>jobs</small></div>
                 <div><span>GVA</span><strong data-field="gva_sar_million">—</strong><small>SAR million</small></div>
-            </div>
-            <div class="sector-chart-title"><strong>GVA Share S-curve</strong><span>${years[0]}–${years[years.length - 1]}</span></div>
-            <div class="sector-chart"></div>`;
+            </div>`;
         block.querySelector("h4").textContent = sector.sector_name;
         return block;
     }));
 
-    container.querySelectorAll(".sector-block").forEach((block) => {
-        const code = block.dataset.sectorCode;
-        const series = annual.map((row) =>
-            row.sectors.find((item) => item.sector_code === code)?.gva_share_s_curve ?? null
-        );
-        const chart = echarts.init(block.querySelector(".sector-chart"));
-        chart.setOption(sCurveOption(years, series, selectedYear));
-        state.sectorCharts[code] = chart;
+    renderAllSectorChart(years, annual);
+}
+
+// One chart: GVA share S-curve for every sector
+function renderAllSectorChart(years, annual) {
+    const selectedYear = Number($("year-slider").value);
+    const series = annual[0].sectors.map((sector, index) => {
+        const color = SECTOR_COLORS[index % SECTOR_COLORS.length];
+        return {
+            name: shortSectorName(sector.sector_name),
+            type: "line",
+            smooth: true,
+            symbol: "none",
+            emphasis: { focus: "series" },
+            lineStyle: { width: 2, color },
+            itemStyle: { color },
+            data: annual.map((row) =>
+                row.sectors.find((item) => item.sector_code === sector.sector_code)?.gva_share_s_curve ?? null
+            )
+        };
     });
 
-    requestAnimationFrame(resizeAllCharts);
+    // Year marker sits on the first series; moveYearMarker updates it
+    series[0].markLine = {
+        symbol: "none",
+        silent: true,
+        animation: false,
+        lineStyle: { color: "#ffffff", type: "dashed", width: 1 },
+        label: { formatter: String(selectedYear), color: "#ffffff", fontSize: 10 },
+        data: [{ xAxis: years.indexOf(selectedYear) }]
+    };
+
+    $("all-chart-range").textContent = `${years[0]}–${years[years.length - 1]}`;
+    state.allChart = state.allChart || echarts.init($("all-sector-chart"));
+    state.allChart.setOption({
+        animation: true,
+        tooltip: { trigger: "axis", confine: true, valueFormatter: formatPercent,
+                   textStyle: { fontSize: 10 } },
+        legend: { type: "scroll", bottom: 0, textStyle: { color: "#c3ccdb", fontSize: 9 },
+                  pageTextStyle: { color: "#c3ccdb" }, itemWidth: 14, itemHeight: 8 },
+        grid: { left: 46, right: 16, top: 18, bottom: 62 },
+        xAxis: { type: "category", data: years, axisLabel: { color: "#aeb8ca" } },
+        yAxis: { type: "value", axisLabel: { color: "#aeb8ca", formatter: (value) => `${(value * 100).toFixed(1)}%` },
+                 splitLine: { lineStyle: { color: "rgba(183,197,224,.12)" } } },
+        series
+    }, true);
+    requestAnimationFrame(() => state.allChart.resize());
+}
+
+function shortSectorName(name) {
+    return String(name).replace(/,.*$/, "");
 }
 
 // ============================================================
@@ -465,16 +573,12 @@ function updateYear() {
         const row = state.economy.annual_results.find((item) => item.year === year);
         if (!row) return;
 
-        // Whole economy
         $("economy-population").textContent = formatNumber(row.population);
-
-        // Map totals card
         $("map-economy-year").textContent = year;
         $("map-total-population").textContent = formatNumber(row.population);
         $("map-total-employment").textContent = formatNumber(row.employment_total);
         $("map-total-gva").textContent = formatNumber(row.total_gva_sar_million);
 
-        // Sector blocks
         const years = state.economy.annual_results.map((item) => item.year);
         row.sectors.forEach((sector) => {
             const block = document.querySelector(`.sector-block[data-sector-code="${sector.sector_code}"]`);
@@ -482,8 +586,8 @@ function updateYear() {
             block.querySelectorAll("[data-field]").forEach((cell) => {
                 cell.textContent = formatNumber(sector[cell.dataset.field]);
             });
-            moveYearMarker(state.sectorCharts[sector.sector_code], years, year);
         });
+        moveYearMarker(state.allChart, years, year);
         return;
     }
 
@@ -532,23 +636,13 @@ function sCurveOption(years, data, selectedYear) {
 function moveYearMarker(chart, years, year) {
     if (!chart) return;
     chart.setOption({
-        series: [{
-            markLine: {
-                label: { formatter: String(year) },
-                data: [{ xAxis: years.indexOf(year) }]
-            }
-        }]
+        series: [{ markLine: { label: { formatter: String(year) }, data: [{ xAxis: years.indexOf(year) }] } }]
     });
-}
-
-function disposeSectorCharts() {
-    Object.values(state.sectorCharts).forEach((chart) => chart.dispose());
-    state.sectorCharts = {};
 }
 
 function resizeAllCharts() {
     state.chart?.resize();
-    Object.values(state.sectorCharts).forEach((chart) => chart.resize());
+    state.allChart?.resize();
 }
 
 // ============================================================
@@ -557,7 +651,12 @@ function resizeAllCharts() {
 async function request(url, options = {}) {
     const response = await fetch(url, options);
     const payload = await response.json();
-    if (!response.ok) throw new Error(payload.detail || "The request failed.");
+    if (!response.ok) {
+        const detail = Array.isArray(payload.detail) ? payload.detail.map((d) => d.msg).join("; ") : payload.detail;
+        const error = new Error(detail || "The request failed.");
+        error.status = response.status;
+        throw error;
+    }
     return payload;
 }
 

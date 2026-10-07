@@ -96,3 +96,22 @@
 .sector-chart-title{display:flex;justify-content:space-between;font-size:10px;margin:12px 0 4px}
 .sector-chart-title span{color:var(--muted)}
 .sector-chart{height:160px}
+/* Comparator regions panel */
+.band-panel{display:grid;gap:10px;padding:14px;margin-bottom:14px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.04)}
+.band-header{display:flex;justify-content:space-between;align-items:center}
+.band-header h3{margin:0;font-size:12px;font-weight:700;letter-spacing:.04em}
+.band-reset{background:none;border:0;color:#ff9b68;font:inherit;font-size:10px;cursor:pointer}
+.band-reset:hover{text-decoration:underline}
+.band-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:6px 8px;align-items:center}
+.band-grid small{color:var(--muted);font-size:9px}
+.band-grid label{font-size:10px;color:var(--muted)}
+.band-input{width:100%;padding:7px 8px;border:1px solid var(--border);border-radius:8px;background:rgba(10,16,40,.6);color:#fff;font:inherit;font-size:11px}
+.band-input:focus{outline:none;border-color:#bd8cff;box-shadow:0 0 0 2px rgba(189,140,255,.25)}
+.band-input.is-invalid{border-color:#ff5a5a;box-shadow:0 0 0 2px rgba(255,90,90,.25)}
+.band-status{margin:0;font-size:10px;line-height:1.4}
+.band-status.is-ok{color:#55e890}
+.band-status.is-warning{color:#ffc35a}
+.band-status.is-error{color:#ff6b6b}
+/* Combined all-sector S-curve chart */
+.all-sector-chart-card{margin:4px 0 14px;background:rgba(0,0,0,.16);border:1px solid var(--border);border-radius:10px;padding:13px}
+#all-sector-chart{height:320px}

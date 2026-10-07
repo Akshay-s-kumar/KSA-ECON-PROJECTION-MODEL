@@ -5,14 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>KSA Economic Projection Model</title>
     <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261006">
+    <link rel="stylesheet" href="style.css?v=20261008">
 </head>
 <body>
     <div class="background" aria-hidden="true"></div>
     <main class="app-shell" id="app-shell">
         <aside class="parameter-panel glass-panel">
             <div class="brand"><span class="brand-mark">KSA</span><div><strong>Economic</strong><br>Projection Model</div></div>
-            <div class="panel-heading"><span>VERSION 3</span><h2>Parameter Selection</h2></div>
+            <div class="panel-heading"><span>VERSION 4</span><h2>Parameter Selection</h2></div>
+
+            <section class="band-panel" aria-label="Comparator regions">
+                <div class="band-header">
+                    <h3>Comparator regions</h3>
+                    <button type="button" class="band-reset" id="band-reset">Reset to workbook</button>
+                </div>
+                <div class="band-grid">
+                    <span></span><small>Min</small><small>Max</small>
+                    <label for="band-nuts3-min">NUTS3 population</label>
+                    <input id="band-nuts3-min" class="band-input" data-key="nuts3_min" type="number" min="0" step="10000">
+                    <input id="band-nuts3-max" class="band-input" data-key="nuts3_max" type="number" min="0" step="10000">
+                    <label for="band-nuts2-min">NUTS2 population</label>
+                    <input id="band-nuts2-min" class="band-input" data-key="nuts2_min" type="number" min="0" step="100000">
+                    <input id="band-nuts2-max" class="band-input" data-key="nuts2_max" type="number" min="0" step="100000">
+                </div>
+                <p class="band-status" id="band-status" aria-live="polite">—</p>
+            </section>
+
             <label>Region<select id="region-select"></select></label>
             <label>Sector<select id="sector-select"></select></label>
             <div id="scenario-assumptions">
@@ -63,6 +81,10 @@
                     <small>Population</small>
                     <strong id="economy-population">—</strong>
                 </article>
+                <div class="all-sector-chart-card">
+                    <div class="chart-title"><strong>GVA Share S-curve · All sectors</strong><span id="all-chart-range">2023–2070</span></div>
+                    <div id="all-sector-chart"></div>
+                </div>
                 <div id="sector-breakdown-list"></div>
             </section>
             <div class="chart-card"><div class="chart-title"><strong id="chart-title">GVA Share S-curve</strong><span id="chart-range">2023–2070</span></div><div id="gva-chart"></div></div>
@@ -72,6 +94,6 @@
     </main>
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-    <script src="app.js?v=20261006"></script>
+    <script src="appV3.js?v=20261008"></script>
 </body>
 </html>
