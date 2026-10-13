@@ -2,12 +2,12 @@
 
 from pathlib import Path
 
-PROJECT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = Path(__file__).resolve().parent          # = data_pipeline
 WORKBOOK_PATH = PROJECT_DIR / "raw_excel" / "55007720_M14_Project_Grant_Projection_Model.xlsx"
 REFERENCE_DB_PATH = PROJECT_DIR / "processed" / "v4_reference.duckdb"
 
 # sector_code -> (GVA share sheet, GVA-employment delta sheet)
-# Align these codes with the sector codes used in v3_model.py.
+# Codes and order match SECTOR_ORDER in v3_model.py.
 SECTORS = {
     "A":   ("NUTS3-A",   "GVA_EMP_DELTA-3-A"),
     "B-E": ("NUTS3-B-E", "GVA_EMP_DELTA-3-B-E"),
@@ -16,7 +16,7 @@ SECTORS = {
     "J":   ("NUTS3-J",   "GVA_EMP_DELTA-3-J"),
     "K":   ("NUTS3-K",   "GVA_EMP_DELTA-3-K"),
     "L":   ("NUTS3-L",   "GVA_EMP_DELTA-3-L"),
-    "M-N": ("NUTS3-M_N", "GVA_EMP_DELTA-3-M-N"),
+    "M_N": ("NUTS3-M_N", "GVA_EMP_DELTA-3-M-N"),
     "O-Q": ("NUTS3-O-Q", "GVA_EMP_DELTA-3-O-Q"),
     "R-U": ("NUTS3-R-U", "GVA_EMP_DELTA-3-R-U"),
 }

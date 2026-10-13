@@ -41,6 +41,10 @@ class Band:
             raise BandError("NUTS2 minimum is higher than NUTS2 maximum.")
         return self
 
+    def as_dict(self) -> dict:
+        return {"nuts3_min": float(self.nuts3_min), "nuts3_max": float(self.nuts3_max),
+                "nuts2_min": float(self.nuts2_min), "nuts2_max": float(self.nuts2_max)}
+
 
 def excel_percentile(values: np.ndarray, p: float) -> float:
     """Excel PERCENTILE / PERCENTILE.INC (linear interpolation, n-1 basis)."""
@@ -63,12 +67,12 @@ class ReferenceData:
 
         self.sectors = list(cfg.SECTORS)
         self.gva, self.gva_emp = {}, {}
+        emp = tables["gva_emp_comparators"]
         for code in self.sectors:
             g = gva[gva.sector_code == code]
             self.gva[code] = (g.nuts3_id.to_numpy(), g.nuts3_pop.to_numpy(float),
                               g.nuts2_pop.to_numpy(float), g[share_cols].to_numpy(float))
-            e = tables["gva_emp_comparators"]
-            e = e[e.sector_code == code]
+            e = emp[emp.sector_code == code]
             self.gva_emp[code] = (e.nuts3_id.to_numpy(), e.nuts3_pop.to_numpy(float),
                                   e.nuts2_pop.to_numpy(float), e.value.to_numpy(float))
         p = tables["emp_pop_comparators"]
@@ -80,13 +84,7 @@ class ReferenceData:
 
     @classmethod
     def from_duckdb(cls, path: Path = cfg.REFERENCE_DB_PATH) -> "ReferenceData":
-        import duckdb
-        con = duckdb.connect(str(path), read_only=True)
-        try:
-            names = [r[0] for r in con.execute("SHOW TABLES").fetchall()]
-            return cls({name: con.execute(f"SELECT * FROM {name}").df() for name in names})
-        finally:
-            con.close()
+        return cls(load_tables(path))
 
     # ---- defaults -------------------------------------------------------------
     def workbook_band(self, lookup: str, sector_code: str | None = None) -> Band:
@@ -94,13 +92,13 @@ class ReferenceData:
         if sector_code is not None:
             rows = rows[rows.sector_code == sector_code]
         r = rows.iloc[0]
-        return Band(r.nuts3_min, r.nuts3_max, r.nuts2_min, r.nuts2_max)
+        return Band(float(r.nuts3_min), float(r.nuts3_max), float(r.nuts2_min), float(r.nuts2_max))
 
     def default_shared_band(self) -> Band:
         """One shared band for the app: the GVA band from the workbook (BH1:BH4)."""
         return self.workbook_band("gva", self.sectors[0])
 
-    # ---- comparator counts for the UI -------------------------------------------
+    # ---- comparator regions for the UI ------------------------------------------
     def comparators(self, band: Band) -> dict:
         band.validate()
         def ids(data):
@@ -142,6 +140,17 @@ class ReferenceData:
         if values.size == 0:
             raise BandError(f"No comparator region passes the band for {label}.")
         return values
+
+
+def load_tables(path: Path = cfg.REFERENCE_DB_PATH) -> dict[str, pd.DataFrame]:
+    """Read every table of v4_reference.duckdb into pandas (read-only, file closed afterwards)."""
+    import duckdb
+    con = duckdb.connect(str(path), read_only=True)
+    try:
+        names = [r[0] for r in con.execute("SHOW TABLES").fetchall()]
+        return {name: con.execute(f'SELECT * FROM "{name}"').df() for name in names}
+    finally:
+        con.close()
 
 
 class LookupService:

@@ -230,9 +230,9 @@ Comparator regions                    Reset to workbook
                        Min          Max
 NUTS3 population   [ 200000 ]   [ 300000 ]
 NUTS2 population   [ 7500000 ]  [ 12500000 ]
-⚠ GVA 1 · GVA–Emp 1 · Emp–Pop 0 regions pass. Widen the range.
+⚠ GVA 1 · GVA–Emp 1 · Emp–Pop 1 regions pass. Widen the range.
 ──────────────────────────────────────────
-Region / Sector dropdowns
+Region / Sector dropdowns (blank until selected)
 GVA percentile             ──●──  50%
 GVA–employment delta       ──●──  50%
 Employment–population      ──●──  50%
@@ -242,15 +242,22 @@ Employment–population      ──●──  50%
 
 | Action | Result |
 |---|---|
-| Page opens | Boxes fill with the workbook figures and results load straight away |
+| Page opens | Population boxes fill with the workbook figures; region and sector stay blank and the map shows all 13 regions |
+| Select a region or click its map boundary | The region is selected and its boundary is highlighted orange |
+| Select Riyadh and a sector, or All sectors | The projection and results load automatically |
+| Select any of the other 12 regions | Its boundary is highlighted; a message explains that projections currently have Riyadh data only |
+| Map appearance | Satellite imagery is darkened by 50% so the selected orange region boundary stands out |
+| Boundary overlays | Purple region borders and the selected orange highlight are restored whenever the map style finishes loading |
+| Population band inputs | NUTS3 and NUTS2 each show separate, wider Min and Max number fields |
 | Change a figure, then press Enter or click out | Results and region count update automatically |
 | Move a slider | Results update 250 ms after you stop (same as V3) |
 | Click **Reset to workbook** | Workbook figures return and results update |
 | Min higher than max, or an empty box | Box turns red and previous results stay |
 | No regions pass | Red message: widen the range. Previous results stay |
-| Fewer than 10 regions pass | Amber warning: percentiles will barely change |
+| Exactly one region passes | Amber warning: every percentile gives the same benchmark, so that slider cannot change its result; widen the band |
+| 2–9 regions pass | Amber warning: percentiles may change only slightly |
 | Right panel | Scenario details show the **comparator band** used |
-| Run button | Renamed **Refresh Projection**. Optional, because everything updates on its own |
+| Run button | **Refresh Projection** is enabled only after choosing Riyadh and a sector or All sectors |
 
 Population boxes update on **Enter or blur**, not on every keystroke, so a half-typed number such as "2" doesn't briefly filter out almost every region.
 

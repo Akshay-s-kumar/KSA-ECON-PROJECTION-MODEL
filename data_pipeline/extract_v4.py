@@ -1,9 +1,12 @@
 """Version 4 extraction: Excel -> v4_reference.duckdb (run once per workbook change).
 
-Reads the raw comparator regions and the Excel checkpoint values. No scenario is precomputed.
+Reads the raw comparator regions, the Riyadh base data used by the V3 formulas,
+and the Excel checkpoint values. No scenario is precomputed.
 
     python extract_v4.py
     python extract_v4.py --workbook "path/to/workbook.xlsx" --output v4_reference.duckdb
+
+Stop the API (uvicorn) before running, so the DuckDB file is not locked.
 """
 
 from __future__ import annotations
@@ -35,10 +38,9 @@ def _block(ws, first_row: int, last_row: int, first_col: str, last_col: str) -> 
 
 
 def _cell(ws, address: str):
-    return _block(ws, int("".join(filter(str.isdigit, address))),
-                  int("".join(filter(str.isdigit, address))),
-                  "".join(filter(str.isalpha, address)),
-                  "".join(filter(str.isalpha, address)))[0][0]
+    row = int("".join(filter(str.isdigit, address)))
+    col = "".join(filter(str.isalpha, address))
+    return _block(ws, row, row, col, col)[0][0]
 
 
 def _band(ws, cells: dict, lookup: str, sector_code: str | None) -> dict:
@@ -53,23 +55,26 @@ def _column(rows: list[tuple], offset: int) -> list:
     return [row[offset] for row in rows]
 
 
-def read_workbook(path: Path) -> dict[str, pd.DataFrame]:
+# ============================================================
+# COMPARATOR REGIONS
+# ============================================================
+def read_comparators(path: Path) -> dict[str, pd.DataFrame]:
     wb = load_workbook(path, read_only=True, data_only=True)
     try:
         gva_frames, gva_emp_frames, bands, checks = [], [], [], []
+        base = col_idx("A")
 
-        # ---- GVA share sheets ------------------------------------------------
         g = cfg.GVA
         share_cols = range(col_idx(g["share_first_col"]), col_idx(g["share_last_col"]) + 1)
         for code, (gva_sheet, gva_emp_sheet) in cfg.SECTORS.items():
+            # ---- GVA share sheet ----------------------------------------------
             ws = wb[gva_sheet]
             years = [int(y) for y in _block(ws, 1, 1, g["share_first_col"], g["share_last_col"])[0]]
             rows = _block(ws, g["first_row"], g["last_row"], "A", g["nuts2_pop_col"])
-            base = col_idx("A")
             frame = pd.DataFrame({
                 "sector_code": code,
                 "excel_row": range(g["first_row"], g["last_row"] + 1),
-                "nuts3_id": _column(rows, col_idx(g["id_col"]) - base),
+                "nuts3_id": [str(v) for v in _column(rows, col_idx(g["id_col"]) - base)],
                 "nuts3_pop": [_num(v) for v in _column(rows, col_idx(g["nuts3_pop_col"]) - base)],
                 "nuts2_pop": [_num(v) for v in _column(rows, col_idx(g["nuts2_pop_col"]) - base)],
             })
@@ -78,36 +83,35 @@ def read_workbook(path: Path) -> dict[str, pd.DataFrame]:
             gva_frames.append(frame)
             bands.append(_band(ws, g["band_cells"], "gva", code))
 
-            check_rows = _block(ws, g["check_first_row"], g["check_last_row"],
-                                g["check_percentile_col"], g["check_value_col"])
-            p_off = 0
             v_off = col_idx(g["check_value_col"]) - col_idx(g["check_percentile_col"])
-            for row in check_rows:
-                checks.append({"lookup": "gva", "sector_code": code,
-                               "percentile": round(_num(row[p_off]), 4), "excel_value": _num(row[v_off])})
+            for row in _block(ws, g["check_first_row"], g["check_last_row"],
+                              g["check_percentile_col"], g["check_value_col"]):
+                pct, value = _num(row[0]), _num(row[v_off])
+                if not np.isnan(pct) and not np.isnan(value):
+                    checks.append({"lookup": "gva", "sector_code": code,
+                                   "percentile": round(pct, 4), "excel_value": value})
 
-            # ---- GVA-employment delta sheet ---------------------------------
+            # ---- GVA-employment delta sheet -----------------------------------
             e = cfg.GVA_EMP
             ws = wb[gva_emp_sheet]
             rows = _block(ws, e["first_row"], e["last_row"], "A", e["nuts2_pop_col"])
             gva_emp_frames.append(pd.DataFrame({
                 "sector_code": code,
                 "excel_row": range(e["first_row"], e["last_row"] + 1),
-                "nuts3_id": _column(rows, col_idx(e["id_col"]) - base),
+                "nuts3_id": [str(v) for v in _column(rows, col_idx(e["id_col"]) - base)],
                 "nuts3_pop": [_num(v) for v in _column(rows, col_idx(e["nuts3_pop_col"]) - base)],
                 "nuts2_pop": [_num(v) for v in _column(rows, col_idx(e["nuts2_pop_col"]) - base)],
                 "value": [_num(v) for v in _column(rows, col_idx(e["value_col"]) - base)],
             }))
             bands.append(_band(ws, e["band_cells"], "gva_emp", code))
 
-        # ---- Employment-population delta (one sheet) ---------------------------
+        # ---- Employment-population delta (one sheet) -------------------------------
         p = cfg.EMP_POP
         ws = wb[p["sheet"]]
         rows = _block(ws, p["first_row"], p["last_row"], "A", p["nuts2_pop_col"])
-        base = col_idx("A")
         emp_pop = pd.DataFrame({
             "excel_row": range(p["first_row"], p["last_row"] + 1),
-            "nuts3_id": _column(rows, col_idx(p["id_col"]) - base),
+            "nuts3_id": [str(v) for v in _column(rows, col_idx(p["id_col"]) - base)],
             "nuts3_pop": [_num(v) for v in _column(rows, col_idx(p["nuts3_pop_col"]) - base)],
             "nuts2_pop": [_num(v) for v in _column(rows, col_idx(p["nuts2_pop_col"]) - base)],
             "value": [_num(v) for v in _column(rows, col_idx(p["value_col"]) - base)],
@@ -129,12 +133,54 @@ def read_workbook(path: Path) -> dict[str, pd.DataFrame]:
         "emp_pop_comparators": emp_pop,
         "default_bands": pd.DataFrame(bands),
         "excel_checkpoints": pd.DataFrame(checks),
-        "metadata": pd.DataFrame([{
-            "workbook": path.name,
-            "workbook_modified": dt.datetime.fromtimestamp(path.stat().st_mtime).isoformat(timespec="seconds"),
-            "extracted_at": dt.datetime.now().isoformat(timespec="seconds"),
-        }]),
     }
+
+
+# ============================================================
+# RIYADH BASE DATA (same cells V3 reads, via v3_model.WorkbookReference)
+# ============================================================
+def read_riyadh(path: Path) -> dict[str, pd.DataFrame]:
+    from v3_model import SECTOR_ORDER, WorkbookReference
+
+    ref = WorkbookReference(path)
+    years = sorted(ref.base_gva)
+    sector_years = pd.DataFrame([
+        {"year": year, "sector_code": code,
+         "base_gva": ref.base_gva[year][i], "productivity": ref.productivity[year][i]}
+        for year in years for i, code in enumerate(SECTOR_ORDER)
+    ])
+    riyadh_years = pd.DataFrame({"year": years,
+                                 "population_ratio": [ref.population_ratio[y] for y in years]})
+    sectors = pd.DataFrame({
+        "sector_code": list(SECTOR_ORDER),
+        "employment_group": list(ref.employment_groups),
+        "baseline_gva_percentile": list(ref.baseline_gva_percentiles),
+        "baseline_gva_emp_percentile": list(ref.baseline_gva_emp_percentiles),
+    })
+    groups = pd.DataFrame([
+        {"employment_group": group,
+         "saudi_share": ref.workforce_share[group][0], "non_saudi_share": ref.workforce_share[group][1],
+         "saudi_monthly_income": ref.income_rate[group][0], "non_saudi_monthly_income": ref.income_rate[group][1]}
+        for group in ref.workforce_share
+    ])
+    scalars = pd.DataFrame({
+        "name": ["mpc_1", "mpc_2", "mpc_3", "baseline_emp_pop_percentile"],
+        "value": [*ref.mpc, ref.baseline_emp_pop_percentile],
+    })
+    return {"riyadh_sector_years": sector_years, "riyadh_years": riyadh_years,
+            "riyadh_sectors": sectors, "riyadh_groups": groups, "riyadh_scalars": scalars}
+
+
+def read_workbook(path: Path, include_riyadh: bool = True) -> dict[str, pd.DataFrame]:
+    tables = read_comparators(path)
+    if include_riyadh:
+        tables.update(read_riyadh(path))
+    tables["metadata"] = pd.DataFrame([{
+        "workbook": path.name,
+        "workbook_modified": dt.datetime.fromtimestamp(path.stat().st_mtime).isoformat(timespec="seconds"),
+        "extracted_at": dt.datetime.now().isoformat(timespec="seconds"),
+    }])
+    return tables
 
 
 def write_duckdb(tables: dict[str, pd.DataFrame], output: Path) -> None:
@@ -146,7 +192,7 @@ def write_duckdb(tables: dict[str, pd.DataFrame], output: Path) -> None:
     try:
         for name, frame in tables.items():
             con.register("frame", frame)
-            con.execute(f"CREATE TABLE {name} AS SELECT * FROM frame")
+            con.execute(f'CREATE TABLE "{name}" AS SELECT * FROM frame')
             con.unregister("frame")
     finally:
         con.close()
@@ -160,7 +206,7 @@ def main() -> None:
     args = parser.parse_args()
 
     start = time.perf_counter()
-    print(f"Reading {args.workbook.name} (large workbook, this can take a minute)...")
+    print(f"Reading {args.workbook.name} (large workbook, this can take a few minutes)...")
     tables = read_workbook(args.workbook)
     write_duckdb(tables, args.output)
     for name, frame in tables.items():

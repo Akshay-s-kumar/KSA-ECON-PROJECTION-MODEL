@@ -19,8 +19,8 @@ const $ = (id) => document.getElementById(id);
 const initialView = { center: [45.1, 24.3], zoom: 4.55 };
 const BAND_KEYS = ["nuts3_min", "nuts3_max", "nuts2_min", "nuts2_max"];
 const LOW_COMPARATOR_COUNT = 10;
-const SECTOR_COLORS = ["#ff7438", "#bd8cff", "#55e890", "#67b7ff", "#ffc35a",
-                       "#ff87c8", "#55e5f5", "#c4f25a", "#ff6b6b", "#e2e8f0"];
+const SECTOR_COLORS = ["#E53935", "#6FA8DC", "#E58FB0", "#7BCF8E", "#F2C46D",
+                       "#B84A48", "#507DA5", "#B76F8B", "#609F6C", "#B79A55"];
 let assumptionUpdateTimeout;
 let scenarioRequestVersion = 0;
 
@@ -32,10 +32,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     initializeMap();
     try {
         state.filters = await request("/api/v4/filters");
-        populateFilters(state.filters);
-        $("map-status").textContent = "Choose a sector projection or view all-sector GVA";
         await loadBoundaries();
-        runScenario();
+        populateFilters(state.filters);
+        $("map-status").textContent = "Select a region on the map or from the Region list";
     } catch (error) {
         showError(error.message);
         $("map-status").textContent = "Unable to load model data";
@@ -74,15 +73,22 @@ function bindControls() {
     });
 
     $("run-button").addEventListener("click", runScenario);
+    $("region-select").addEventListener("change", handleRegionChange);
     $("sector-select").addEventListener("change", () => {
         updateSectorControl();
-        runScenario();
     });
     $("close-results").addEventListener("click", closeResults);
     $("year-slider").addEventListener("input", updateYear);
     $("zoom-in").addEventListener("click", () => state.map.zoomIn());
     $("zoom-out").addEventListener("click", () => state.map.zoomOut());
-    $("reset-map").addEventListener("click", () => state.map.flyTo(initialView));
+    $("reset-map").addEventListener("click", () => {
+        const selected = $("region-select").value;
+        const feature = state.boundaries?.features?.find((item) =>
+            regionCodeFromFeature(item) === selected
+        );
+        if (feature) focusFeature(feature);
+        else focusAllRegions();
+    });
     window.addEventListener("resize", resizeAllCharts);
 }
 
@@ -126,6 +132,7 @@ function renderComparators(counts) {
     const lowest = Math.min(counts.gva, counts.gva_emp, counts.emp_pop);
     const text = `GVA ${counts.gva} · GVA–Emp ${counts.gva_emp} · Emp–Pop ${counts.emp_pop} regions pass`;
     if (lowest === 0) setBandStatus(`${text}. Widen the range.`, "error");
+    else if (lowest === 1) setBandStatus(`${text}. A benchmark with one passing region has the same value at every percentile. Widen the range to make its slider affect results.`, "warning");
     else if (lowest < LOW_COMPARATOR_COUNT) setBandStatus(`${text}. Few regions: percentiles will barely change.`, "warning");
     else setBandStatus(`✓ ${text}`, "ok");
 }
@@ -164,11 +171,19 @@ function initializeMap() {
                 id: "satellite",
                 type: "raster",
                 source: "satellite",
-                paint: { "raster-opacity": .76, "raster-saturation": -.35, "raster-contrast": .15 }
+                paint: {
+                    "raster-opacity": .72,
+                    "raster-saturation": -.55,
+                    "raster-contrast": .08,
+                    "raster-brightness-max": .38
+                }
             }]
         }
     });
     state.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+    ["load", "style.load", "styledata", "idle"].forEach((eventName) =>
+        state.map.on(eventName, addBoundaryLayers)
+    );
     state.map.on("mousemove", (event) =>
         $("map-coordinate").textContent = `${event.lngLat.lat.toFixed(2)}°N ${event.lngLat.lng.toFixed(2)}°E`
     );
@@ -178,49 +193,113 @@ async function loadBoundaries() {
     const response = await fetch("/api/boundaries");
     if (!response.ok) throw new Error("Administrative boundary data is unavailable.");
     state.boundaries = await response.json();
-    if (state.map.loaded()) addBoundaryLayers();
-    else state.map.once("load", addBoundaryLayers);
+    addBoundaryLayers();
 }
 
 function addBoundaryLayers() {
-    if (state.map.getSource("boundaries")) return;
-    const riyadhFilter = ["==", ["get", "NAME_1"], "Ar Riyad"];
+    if (!state.boundaries || !state.map.isStyleLoaded()) return;
 
-    state.map.addSource("boundaries", { type: "geojson", data: state.boundaries });
-    state.map.addLayer({ id: "boundary-fill", type: "fill", source: "boundaries",
-        paint: { "fill-color": "#806cff", "fill-opacity": .08 } });
-    state.map.addLayer({ id: "boundary-outline", type: "line", source: "boundaries",
-        paint: { "line-color": "#b8a9ff", "line-width": 1.2, "line-opacity": .82 } });
-    state.map.addLayer({ id: "riyadh-fill-glow", type: "fill", source: "boundaries", filter: riyadhFilter,
-        paint: { "fill-color": "#ff7438", "fill-opacity": 0 } });
-    state.map.addLayer({ id: "riyadh-glow", type: "line", source: "boundaries", filter: riyadhFilter,
-        paint: { "line-color": "#ff642b", "line-width": 8, "line-opacity": 0, "line-blur": 5 } });
-    state.map.addLayer({ id: "riyadh-highlight", type: "line", source: "boundaries", filter: riyadhFilter,
-        paint: { "line-color": "#ff9a69", "line-width": 1.2, "line-opacity": 0 } });
+    let layersAdded = false;
+    if (!state.map.getSource("boundaries")) {
+        state.map.addSource("boundaries", { type: "geojson", data: state.boundaries });
+    }
+    if (!state.map.getLayer("boundary-fill")) {
+        state.map.addLayer({ id: "boundary-fill", type: "fill", source: "boundaries",
+            paint: { "fill-color": "#E53935", "fill-opacity": .035 } });
+        layersAdded = true;
+    }
+    if (!state.map.getLayer("boundary-outline")) {
+        state.map.addLayer({ id: "boundary-outline", type: "line", source: "boundaries",
+            paint: { "line-color": "#E53935", "line-width": 1.1, "line-opacity": .72 } });
+        layersAdded = true;
+    }
+    if (!state.map.getLayer("selected-region-fill-glow")) {
+        state.map.addLayer({ id: "selected-region-fill-glow", type: "fill", source: "boundaries",
+            paint: { "fill-color": "#E53935", "fill-opacity": .1 } });
+        layersAdded = true;
+    }
+    if (!state.map.getLayer("selected-region-glow")) {
+        state.map.addLayer({ id: "selected-region-glow", type: "line", source: "boundaries",
+            paint: { "line-color": "#E53935", "line-width": 10, "line-opacity": .85, "line-blur": 4 } });
+        layersAdded = true;
+    }
+    if (!state.map.getLayer("selected-region-highlight")) {
+        state.map.addLayer({ id: "selected-region-highlight", type: "line", source: "boundaries",
+            paint: { "line-color": "#FF5A54", "line-width": 2, "line-opacity": 1 } });
+        layersAdded = true;
+    }
 
-    state.map.on("click", "boundary-fill", (event) => {
-        const feature = event.features?.[0];
-        if (feature) focusFeature(feature);
-    });
-    state.map.on("mouseenter", "boundary-fill", () => state.map.getCanvas().style.cursor = "pointer");
-    state.map.on("mouseleave", "boundary-fill", () => state.map.getCanvas().style.cursor = "");
+    if (!state.boundaryInteractionsBound) {
+        state.map.on("click", "boundary-fill", (event) => {
+            const feature = event.features?.[0];
+            if (feature) {
+                $("region-select").value = regionCodeFromFeature(feature);
+                handleRegionChange();
+            }
+        });
+        state.map.on("mouseenter", "boundary-fill", () => state.map.getCanvas().style.cursor = "pointer");
+        state.map.on("mouseleave", "boundary-fill", () => state.map.getCanvas().style.cursor = "");
+        state.boundaryInteractionsBound = true;
+    }
 
-    if ($("app-shell").classList.contains("results-open")) {
-        highlightRiyadh();
-        zoomToRiyadh();
+    if (layersAdded) updateSelectedBoundary();
+    if (!$("region-select").value && !state.boundariesFocused) {
+        focusAllRegions();
+        state.boundariesFocused = true;
     }
 }
 
-function highlightRiyadh() {
-    if (!state.map.getLayer("riyadh-glow")) return;
-    state.map.setPaintProperty("riyadh-fill-glow", "fill-opacity", 0.06);
-    state.map.setPaintProperty("riyadh-glow", "line-opacity", 0.7);
-    state.map.setPaintProperty("riyadh-highlight", "line-opacity", 1);
+function regionCodeFromFeature(feature) {
+    const name = feature.properties?.NAME_1;
+    return name === "Ar Riyad" ? "Riyadh" : name;
 }
 
-function zoomToRiyadh() {
-    const feature = state.boundaries?.features?.find((item) => item.properties?.NAME_1 === "Ar Riyad");
+function regionNameFromCode(code) {
+    return code === "Riyadh" ? "Ar Riyad" : code;
+}
+
+function handleRegionChange() {
+    updateSelectedBoundary();
+    updateSectorControl();
+    focusSelectedRegion();
+}
+
+function focusSelectedRegion() {
+    const selected = $("region-select").value;
+    const feature = state.boundaries?.features?.find((item) =>
+        regionCodeFromFeature(item) === selected
+    );
     if (feature) focusFeature(feature);
+}
+
+function updateSelectedBoundary() {
+    const layers = ["selected-region-fill-glow", "selected-region-glow", "selected-region-highlight"];
+    if (!state.map || !layers.every((layer) => state.map.getLayer(layer))) {
+        addBoundaryLayers();
+        return;
+    }
+    const code = $("region-select").value;
+    const filter = code
+        ? ["==", ["get", "NAME_1"], regionNameFromCode(code)]
+        : ["==", ["get", "GID_1"], "__no_region_selected__"];
+    layers.forEach((layer) => state.map.setFilter(layer, filter));
+    state.map.setPaintProperty("selected-region-fill-glow", "fill-opacity", code ? 0.06 : 0);
+    state.map.setPaintProperty("selected-region-glow", "line-opacity", code ? 0.7 : 0);
+    state.map.setPaintProperty("selected-region-highlight", "line-opacity", code ? 1 : 0);
+}
+
+function focusAllRegions() {
+    const bounds = new maplibregl.LngLatBounds();
+    const visit = (coordinates) =>
+        Array.isArray(coordinates[0]) ? coordinates.forEach(visit) : bounds.extend(coordinates);
+    state.boundaries?.features?.forEach((feature) => visit(feature.geometry.coordinates));
+    if (!bounds.isEmpty()) {
+        state.map.fitBounds(bounds, {
+            padding: { top: 80, right: 55, bottom: 70, left: 55 },
+            duration: 0,
+            maxZoom: 4.7
+        });
+    }
 }
 
 function focusFeature(feature) {
@@ -239,12 +318,38 @@ function focusFeature(feature) {
 // FILTERS AND ASSUMPTION CONTROLS
 // ============================================================
 function populateFilters(filters) {
-    $("region-select").innerHTML = filters.regions
-        .map((item) => `<option value="${item.code}">${item.name}</option>`).join("");
-    $("sector-select").innerHTML =
-        `<option value="ALL">All sectors — economy total</option>` +
-        filters.sectors.map((item) => `<option value="${item.code}">${item.name}</option>`).join("");
-    $("sector-select").value = filters.sectors[0]?.code ?? "ALL";
+    const regionLabels = {
+        "'Asir": "Asir",
+        "Al Bahah": "Al Bahah",
+        "Al Hudud ash Shamaliyah": "Northern Borders",
+        "Al Jawf": "Al Jawf",
+        "Al Madinah": "Madinah",
+        "Al Qassim": "Qassim",
+        "Ar Riyad": "Riyadh",
+        "Ash-Sharqīyah": "Eastern Province",
+        "Ḥaʼil": "Hail",
+        Jizan: "Jizan",
+        Makkah: "Makkah",
+        Najran: "Najran",
+        Tabuk: "Tabuk"
+    };
+    const regions = (state.boundaries?.features ?? [])
+        .map((feature) => {
+            const name = feature.properties?.NAME_1;
+            return { code: regionCodeFromFeature(feature), name: regionLabels[name] ?? name };
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
+    const regionSelect = $("region-select");
+    regionSelect.replaceChildren(new Option("Select a region", ""));
+    regions.forEach((region) => regionSelect.add(new Option(region.name, region.code)));
+
+    const sectorSelect = $("sector-select");
+    sectorSelect.replaceChildren(
+        new Option("Select a sector or all sectors", ""),
+        new Option("All sectors — economy total", "ALL"),
+        ...filters.sectors.map((item) => new Option(item.name, item.code))
+    );
+    sectorSelect.value = "";
     buildSectorAssumptions(filters.sectors);
     setBandInputs(filters.default_band);
     $("year-slider").min = filters.years.minimum;
@@ -257,15 +362,48 @@ function populateFilters(filters) {
 function updateSectorControl() {
     window.clearTimeout(assumptionUpdateTimeout);
     scenarioRequestVersion += 1;
-    $("run-button").disabled = false;
+    clearResults();
     const isEconomyOverview = $("sector-select").value === "ALL";
-    $("scenario-assumptions").hidden = isEconomyOverview;
-    $("all-sector-assumptions").classList.toggle("is-hidden", !isEconomyOverview);
+    const hasSector = Boolean($("sector-select").value);
+    const isRiyadh = $("region-select").value === "Riyadh";
+    $("scenario-assumptions").hidden = !hasSector || isEconomyOverview || !isRiyadh;
+    $("all-sector-assumptions").classList.toggle("is-hidden", !isEconomyOverview || !isRiyadh);
     $("run-button").innerHTML = "Refresh Projection <span>→</span>";
-    $("control-note").textContent = isEconomyOverview
+    $("control-note").textContent = isEconomyOverview && isRiyadh
         ? "Set assumptions for each sector below. Results update automatically."
-        : "Results update automatically when you move a slider or change a population figure.";
-    if (isEconomyOverview) $("map-status").textContent = "Loading all-sector projections for Riyadh Region...";
+        : "Select a region and sector, or choose All sectors, to view a projection.";
+    updateScenarioAvailability();
+}
+
+function updateScenarioAvailability() {
+    const region = $("region-select").value;
+    const sector = $("sector-select").value;
+    const supported = region === "Riyadh";
+    const ready = Boolean(region && sector && supported);
+    $("run-button").disabled = !ready;
+
+    if (!region || !sector) {
+        hideError();
+        if (!region) {
+            $("map-status").textContent = "Select a region on the map or from the Region list";
+        } else {
+            $("map-status").textContent = `Selected ${$("region-select").selectedOptions[0].textContent}`;
+            $("control-note").textContent = "Choose a sector or All sectors to load a projection.";
+        }
+        return;
+    }
+    if (!supported) {
+        clearResults();
+        $("map-status").textContent = `Showing ${$("region-select").selectedOptions[0].textContent} boundary`;
+        $("control-note").textContent = "The selected boundary is available, but projections currently use Riyadh data only.";
+        showError("Projection data is currently available for Riyadh only. The selected region is highlighted on the map, but its results cannot be calculated yet.");
+        return;
+    }
+    hideError();
+    $("map-status").textContent = sector === "ALL"
+        ? "Loading all-sector projections for Riyadh Region..."
+        : "Loading selected sector projection for Riyadh Region...";
+    runScenario();
 }
 
 function buildSectorAssumptions(sectors) {
@@ -323,6 +461,7 @@ function scheduleScenarioUpdate() {
 
 async function runScenario() {
     window.clearTimeout(assumptionUpdateTimeout);
+    if (!$("region-select").value || !$("sector-select").value || $("region-select").value !== "Riyadh") return;
     const band = readBand();
     if (!band) return;                                  // keep previous results on screen
 
@@ -361,7 +500,7 @@ async function runScenario() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 sector_code: $("sector-select").value,
-                region: "Riyadh",
+                region: $("region-select").value,
                 band,
                 gva_percentile: Number($("gva-percentile").value) / 100,
                 gva_emp_delta_percentile: Number($("gva-emp-percentile").value) / 100,
@@ -403,13 +542,21 @@ function showResults(render) {
         $("results-panel").classList.remove("is-hidden");
         state.map.resize();
         render();
-        highlightRiyadh();
         window.setTimeout(() => {
             state.map.resize();
             resizeAllCharts();
-            zoomToRiyadh();
+            focusSelectedRegion();
         }, 700);
     });
+}
+
+function clearResults() {
+    state.scenario = null;
+    state.economy = null;
+    $("app-shell").classList.remove("results-open");
+    $("results-panel").classList.add("is-hidden");
+    $("economy-map-card").classList.add("is-hidden");
+    state.map?.resize();
 }
 
 function closeResults() {
@@ -536,8 +683,8 @@ function renderAllSectorChart(years, annual) {
         symbol: "none",
         silent: true,
         animation: false,
-        lineStyle: { color: "#ffffff", type: "dashed", width: 1 },
-        label: { formatter: String(selectedYear), color: "#ffffff", fontSize: 10 },
+        lineStyle: { color: "#EDEDED", type: "dashed", width: 1 },
+        label: { formatter: String(selectedYear), color: "#EDEDED", fontSize: 10 },
         data: [{ xAxis: years.indexOf(selectedYear) }]
     };
 
@@ -619,14 +766,14 @@ function sCurveOption(years, data, selectedYear) {
             smooth: true,
             symbol: "none",
             data,
-            lineStyle: { width: 3, color: "#ff7438" },
-            areaStyle: { color: "rgba(255,116,56,.16)" },
+            lineStyle: { width: 3, color: "#E53935" },
+            areaStyle: { color: "rgba(229,57,53,.16)" },
             markLine: {
                 symbol: "none",
                 silent: true,
                 animation: false,
-                lineStyle: { color: "#ffffff", type: "dashed", width: 1 },
-                label: { formatter: String(selectedYear), color: "#ffffff", fontSize: 10 },
+                lineStyle: { color: "#EDEDED", type: "dashed", width: 1 },
+                label: { formatter: String(selectedYear), color: "#EDEDED", fontSize: 10 },
                 data: [{ xAxis: years.indexOf(selectedYear) }]
             }
         }]

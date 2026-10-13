@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>KSA Economic Projection Model</title>
     <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20261008">
+    <link rel="stylesheet" href="style.css?v=20261011-stealth">
 </head>
 <body>
     <div class="background" aria-hidden="true"></div>
@@ -20,13 +20,28 @@
                     <button type="button" class="band-reset" id="band-reset">Reset to workbook</button>
                 </div>
                 <div class="band-grid">
-                    <span></span><small>Min</small><small>Max</small>
-                    <label for="band-nuts3-min">NUTS3 population</label>
-                    <input id="band-nuts3-min" class="band-input" data-key="nuts3_min" type="number" min="0" step="10000">
-                    <input id="band-nuts3-max" class="band-input" data-key="nuts3_max" type="number" min="0" step="10000">
-                    <label for="band-nuts2-min">NUTS2 population</label>
-                    <input id="band-nuts2-min" class="band-input" data-key="nuts2_min" type="number" min="0" step="100000">
-                    <input id="band-nuts2-max" class="band-input" data-key="nuts2_max" type="number" min="0" step="100000">
+                    <div class="band-level">
+                        <h4>NUTS3 population</h4>
+                        <div class="band-inputs">
+                            <label for="band-nuts3-min">Min
+                                <input id="band-nuts3-min" class="band-input" data-key="nuts3_min" type="number" min="0" step="10000">
+                            </label>
+                            <label for="band-nuts3-max">Max
+                                <input id="band-nuts3-max" class="band-input" data-key="nuts3_max" type="number" min="0" step="10000">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="band-level">
+                        <h4>NUTS2 population</h4>
+                        <div class="band-inputs">
+                            <label for="band-nuts2-min">Min
+                                <input id="band-nuts2-min" class="band-input" data-key="nuts2_min" type="number" min="0" step="100000">
+                            </label>
+                            <label for="band-nuts2-max">Max
+                                <input id="band-nuts2-max" class="band-input" data-key="nuts2_max" type="number" min="0" step="100000">
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <p class="band-status" id="band-status" aria-live="polite">—</p>
             </section>
@@ -46,8 +61,8 @@
                 <p>Set the projection assumptions independently for each sector.</p>
                 <div id="all-sector-controls"></div>
             </section>
-            <button id="run-button">Run Projection <span>→</span></button>
-            <p class="control-note" id="control-note">Choose the assumptions for the selected sector. Results are calculated from the workbook-validated V3 scenario database.</p>
+            <button id="run-button" disabled>Refresh Projection <span>→</span></button>
+            <p class="control-note" id="control-note">Select a region and sector, or choose All sectors, to view a projection.</p>
         </aside>
 
         <section class="map-stage">
@@ -94,6 +109,6 @@
     </main>
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-    <script src="appV3.js?v=20261008"></script>
+    <script src="app.js?v=20261011-stealth"></script>
 </body>
 </html>
